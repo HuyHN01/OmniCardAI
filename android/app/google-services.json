@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1015752668490",
+    "project_id": "omnicardai",
+    "storage_bucket": "omnicardai.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1015752668490:android:da60adbd50ccb0f692bdb3",
+        "android_client_info": {
+          "package_name": "com.example.omni_card_ai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAl3Ucrw_sKoo4HqseDWx9swd5EcwIn4-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
