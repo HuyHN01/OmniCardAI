@@ -41,28 +41,6 @@ class _HomeScreenState extends State<HomeScreen> {
       'progressColor': Colors.green,
     },
   ];
-  
-  // ========== NAVIGATION ==========
-  void _onNavItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    // TODO: Navigate to other screens
-    switch (index) {
-    case 0:
-      context.go(AppRoutes.home); // Home
-      break;
-    case 1:
-      context.go(AppRoutes.deckLibrary);
-      break;
-    case 2:
-      //context.go('/stats');
-      break;
-    case 3:
-      //context.go('/profile');
-      break;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -165,37 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
-      ),
-      
-      // ========== BOTTOM NAVIGATION ==========
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _onNavItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey.shade400,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Thư viện',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Thống kê',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Cá nhân',
-          ),
-        ],
       ),
       
       // ========== FLOATING ACTION BUTTON ==========

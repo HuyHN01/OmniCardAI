@@ -71,15 +71,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
       }
     });
   }
-  
-  // ========== NAVIGATION ==========
-  void _onNavItemTapped(int index) {
-    setState(() {
-      _selectedNavIndex = index;
-    });
-    // TODO: Navigate to other screens
-    debugPrint('Navigate to tab $index');
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -152,36 +143,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
         ),
       ),
       
-      // ========== BOTTOM NAVIGATION ==========
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedNavIndex,
-        onTap: _onNavItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF2196F3),
-        unselectedItemColor: Colors.grey.shade400,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Thư viện',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Thống kê',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Cá nhân',
-          ),
-        ],
-      ),
       
       // ========== FAB ==========
       floatingActionButton: FloatingActionButton(
