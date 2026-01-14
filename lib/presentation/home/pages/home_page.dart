@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:omni_card_ai/core/routes/app_route.dart';
+
 // import 'home_widgets.dart'; // Import các widget components
 // import 'app_theme.dart'; // Import design system
 
@@ -14,7 +13,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
   
   // ========== MOCK DATA (sẽ thay bằng Provider/Riverpod sau) ==========
   final int _streakDays = 12;
@@ -143,17 +141,6 @@ class _HomeScreenState extends State<HomeScreen> {
             const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
-      ),
-      
-      // ========== FLOATING ACTION BUTTON ==========
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // TODO: Create new deck
-          debugPrint('Create new deck');
-        },
-        backgroundColor: Colors.blue,
-        elevation: 8,
-        child: const Icon(Icons.add, size: 28),
       ),
     );
   }

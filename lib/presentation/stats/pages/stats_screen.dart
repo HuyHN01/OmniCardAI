@@ -12,7 +12,6 @@ class StatisticsScreen extends StatefulWidget {
 }
 
 class _StatisticsScreenState extends State<StatisticsScreen> {
-  int _selectedNavIndex = 2; // Statistics tab active
   
   // ========== LOAD DATA ==========
   late int _currentStreak;

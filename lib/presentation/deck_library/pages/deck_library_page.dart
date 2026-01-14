@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'deck_library_widgets.dart';
+
 
 /// ============ DECK LIBRARY SCREEN ============
 /// Màn hình thư viện hiển thị tất cả các bộ thẻ của user
@@ -13,7 +13,6 @@ class DeckLibraryScreen extends StatefulWidget {
 
 class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedNavIndex = 1; // Library tab active
   
   // ========== MOCK DATA (Replace with Provider/Riverpod) ==========
   final List<Map<String, dynamic>> _allDecks = [
@@ -141,18 +140,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
             ),
           ],
         ),
-      ),
-      
-      
-      // ========== FAB ==========
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          debugPrint('Create new deck');
-          // TODO: Navigate to create deck screen
-        },
-        backgroundColor: const Color(0xFF2196F3),
-        elevation: 8,
-        child: const Icon(Icons.add, size: 28),
       ),
     );
   }
