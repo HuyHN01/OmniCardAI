@@ -3,6 +3,7 @@ import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/presentation/deck_library/pages/deck_library_page.dart';
 import 'package:omni_card_ai/presentation/home/pages/home_page.dart';
 import 'package:omni_card_ai/presentation/main_shell/main_shell_page.dart';
+import 'package:omni_card_ai/presentation/stats/pages/stats_screen.dart';
 
 
 final GoRouter goRouter = GoRouter(
@@ -24,6 +25,14 @@ final GoRouter goRouter = GoRouter(
             GoRoute(
               path: AppRoutes.deckLibrary,
               builder: (context, state) => const DeckLibraryScreen(),
+            )
+          ]
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: AppRoutes.statistics,
+              builder: (context, state) => const StatisticsScreen(),
             )
           ]
         )

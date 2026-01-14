@@ -1,4 +1,5 @@
 class AppRoutes {
   static const String home = '/';
   static const String deckLibrary = '/deck-library';
+  static const String statistics = '/statistics';
 }
