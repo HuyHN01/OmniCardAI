@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-// --- Helper Function để gọi Modal từ bất kỳ đâu ---
 void showCreateCardModal(BuildContext context) {
   showModalBottomSheet(
     context: context,
-    isScrollControlled: true, // Cho phép modal co giãn theo nội dung
-    backgroundColor: Colors.transparent, // Để hiển thị bo góc của Container con
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
     builder: (context) => const _CreateCardModalContent(),
   );
 }
@@ -17,7 +16,6 @@ class _CreateCardModalContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Định nghĩa màu sắc cục bộ (hoặc lấy từ AppTheme)
     final primaryColor = Colors.blue; 
     final backgroundColor = Colors.white;
     final surfaceColor = const Color(0xFFF8F9FA); // Màu nền xám nhạt cho các thẻ option
