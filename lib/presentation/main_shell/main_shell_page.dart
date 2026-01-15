@@ -34,7 +34,8 @@ class MainShellPage extends StatelessWidget {
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home), 
-          label: 'Trang chủ'),
+          label: 'Trang chủ'
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.library_books),
           label: 'Thư viện',
@@ -43,7 +44,10 @@ class MainShellPage extends StatelessWidget {
           icon: Icon(Icons.bar_chart),
           label: 'Thống kê',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cá nhân'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person), 
+          label: 'Cá nhân'
+        ),
       ],
     );
   }
