@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-// import 'deck_library_widgets.dart';
+
 
 /// ============ DECK LIBRARY SCREEN ============
 /// Màn hình thư viện hiển thị tất cả các bộ thẻ của user
@@ -13,7 +13,6 @@ class DeckLibraryScreen extends StatefulWidget {
 
 class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
-  int _selectedNavIndex = 1; // Library tab active
   
   // ========== MOCK DATA (Replace with Provider/Riverpod) ==========
   final List<Map<String, dynamic>> _allDecks = [
@@ -70,15 +69,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
         }).toList();
       }
     });
-  }
-  
-  // ========== NAVIGATION ==========
-  void _onNavItemTapped(int index) {
-    setState(() {
-      _selectedNavIndex = index;
-    });
-    // TODO: Navigate to other screens
-    debugPrint('Navigate to tab $index');
   }
 
   @override
@@ -150,48 +140,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
             ),
           ],
         ),
-      ),
-      
-      // ========== BOTTOM NAVIGATION ==========
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedNavIndex,
-        onTap: _onNavItemTapped,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF2196F3),
-        unselectedItemColor: Colors.grey.shade400,
-        selectedFontSize: 11,
-        unselectedFontSize: 11,
-        elevation: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Trang chủ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Thư viện',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart),
-            label: 'Thống kê',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Cá nhân',
-          ),
-        ],
-      ),
-      
-      // ========== FAB ==========
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          debugPrint('Create new deck');
-          // TODO: Navigate to create deck screen
-        },
-        backgroundColor: const Color(0xFF2196F3),
-        elevation: 8,
-        child: const Icon(Icons.add, size: 28),
       ),
     );
   }
