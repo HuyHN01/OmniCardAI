@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
@@ -9,7 +10,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await IsarService.init();
   
-  runApp(const MyApp());
+  runApp(
+    ProviderScope(
+      child: MyApp()
+    )
+  );
 }
 
 

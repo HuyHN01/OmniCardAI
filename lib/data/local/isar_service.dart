@@ -14,6 +14,7 @@ class IsarService {
     isar = await Isar.open(
       [DeckModelSchema, CardModelSchema],
       directory: dir.path,
+      inspector: true,
     );
   }
 }

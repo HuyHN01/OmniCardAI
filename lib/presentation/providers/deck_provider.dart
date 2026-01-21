@@ -6,11 +6,10 @@ part 'deck_provider.g.dart';
 
 @riverpod
 class DeckNotifier extends _$DeckNotifier {
-  late final IDeckRepository _repository;
+  IDeckRepository get _repository => ref.read(deckRepositoryProvider);
 
   @override
   FutureOr<List<DeckModel>> build() {
-    _repository = ref.watch(deckRepositoryProvider);
     return _repository.getAllDecks();
   }
 
@@ -24,5 +23,11 @@ class DeckNotifier extends _$DeckNotifier {
       await _repository.saveDeck(newDeck);
       return _repository.getAllDecks();
     });
+
+    // KIỂM TRA LỖI SAU KHI GUARD CHẠY XONG
+    if (state.hasError) {
+      print("Lỗi thực sự là: ${state.error}");
+      print("Stacktrace: ${state.stackTrace}");
+    }
   }
 }
