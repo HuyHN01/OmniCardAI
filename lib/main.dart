@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
+import 'package:omni_card_ai/data/local/isar_service.dart';
 
 const String APPLICATION_NAME = 'OmniCard AI';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await IsarService.init();
+  
   runApp(const MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
