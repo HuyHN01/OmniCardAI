@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/routes/app_route.dart';
+import 'package:omni_card_ai/presentation/create_deck/pages/create_deck_screen.dart';
 import 'package:omni_card_ai/presentation/deck_library/pages/deck_library_page.dart';
 import 'package:omni_card_ai/presentation/home/pages/home_page.dart';
 import 'package:omni_card_ai/presentation/main_shell/main_shell_page.dart';
@@ -14,6 +15,10 @@ final GoRouter goRouter = GoRouter(
     StatefulShellRoute.indexedStack(
       builder: _buildMainShell,
       branches: _mainBranch
+    ),
+    _route(
+      AppRoutes.createDeck, 
+      CreateDeckScreen()
     )
   ]
 );

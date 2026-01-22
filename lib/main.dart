@@ -1,11 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
+import 'package:omni_card_ai/data/local/isar_service.dart';
+import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
 const String APPLICATION_NAME = 'OmniCard AI';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await IsarService.init();
+  
+  runApp(
+    ProviderScope(
+      overrides: [
+        isarProvider.overrideWithValue(IsarService.isar),
+      ],
+      child: MyApp()
+    )
+  );
 }
 
 class MyApp extends StatelessWidget {

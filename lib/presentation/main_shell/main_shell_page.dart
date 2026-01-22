@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/presentation/main_shell/create_card_modal.dart';
 
 class MainShellPage extends StatelessWidget {
@@ -62,27 +63,32 @@ class MainShellPage extends StatelessWidget {
         transitionBuilder: (child, animation) {
           return ScaleTransition(scale: animation, child: child);
         },
-        child: _isFabVisibleForTab(tabIndex) ? _createFab(context) : const SizedBox.shrink(),
+        child: _createFab(context, tabIndex) ?? const SizedBox.shrink(),
       )
     );
   }
   
-  Widget _createFab(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => _onCreateCardPressed(context),
-      backgroundColor: Colors.blue,
-      elevation: 8,
-      child: const Icon(Icons.add, size: 28, color: Colors.white),
-    );
+  Widget? _createFab(BuildContext context, int tabIndex) {
+    if (tabIndex == 1) {
+      return FloatingActionButton(
+        onPressed: () => _onCreateCardPressed(context),
+        backgroundColor: Colors.blue,
+        elevation: 8,
+        child: const Icon(Icons.add, size: 28, color: Colors.white),
+      );
+    }
+    
+    return null;
   }
 
   void _onCreateCardPressed(BuildContext context) {
-    showCreateCardModal(context);
+    //showCreateCardModal(context);
+    context.push(AppRoutes.createDeck);
     debugPrint('Create new deck');
   }
 
-  bool _isFabVisibleForTab (int tabIndex) {
-    return tabIndex == 0 || tabIndex == 1;
-  }
+//   bool _isFabVisibleForTab (int tabIndex) {
+//     return tabIndex == 1;
+//   }
 }
 
