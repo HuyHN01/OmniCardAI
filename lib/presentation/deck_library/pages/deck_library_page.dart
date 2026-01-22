@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/data/models/deck_model.dart';
+import 'package:omni_card_ai/presentation/deck_library/pages/edit_deck_modal.dart';
 import 'package:omni_card_ai/presentation/providers/deck_provider.dart';
 import 'package:omni_card_ai/presentation/deck_library/widgets/deck_library_widgets.dart';
 import 'package:omni_card_ai/presentation/providers/search_provider.dart';
@@ -142,7 +143,7 @@ class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
               label: 'Chỉnh sửa',
               onTap: () {
                 Navigator.pop(context);
-                debugPrint('Edit deck');
+                _showEditDeckModal(context, deck);
               },
             ),
             _buildOption(
@@ -222,6 +223,21 @@ class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  void _showEditDeckModal(BuildContext context, DeckModel deck) {
+    showEditDeckModal(
+      context, 
+      initialTitle: deck.title, 
+      initialDescription: deck.description ?? '', 
+      onSave: (title, description) async {
+        await ref.read(deckNotifierProvider.notifier).updateDeck(
+          deck,
+          title: title,
+          desc: description
+        );
+      }
     );
   }
 }

@@ -25,5 +25,14 @@ class DeckNotifier extends _$DeckNotifier {
   Future<void> deleteDeck(int deckId) async {
     await _repository.deleteDeck(deckId);
   }
-    
+  
+  Future<void> updateDeck(DeckModel deck, {String? title, String? desc}) async {
+    if (title != null) deck.title = title;
+    if (desc != null) deck.description = desc;
+
+    deck.updatedAt = DateTime.now();
+    deck.isDirty = true;
+
+    await _repository.saveDeck(deck);
+  }
 }
