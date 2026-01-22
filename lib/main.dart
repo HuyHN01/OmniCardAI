@@ -5,37 +5,33 @@ import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
-const String APPLICATION_NAME = 'OmniCard AI';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await IsarService.init();
   
+  await IsarService.init();
+
   runApp(
     ProviderScope(
       overrides: [
         isarProvider.overrideWithValue(IsarService.isar),
       ],
-      child: MyApp()
-    )
+      child: const OmniCardApp(),
+    ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class OmniCardApp extends StatelessWidget {
+  const OmniCardApp({super.key});
+
+  static const _appTitle = 'OmniCard AI';
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
-      title: APPLICATION_NAME,
+      title: _appTitle,
       theme: AppTheme.lightTheme,
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
     );
-
-    // return MaterialApp(
-    //   //home: DeckDetailScreen(),
-    //   home: StudyScreen(),
-    // );
   }
 }
