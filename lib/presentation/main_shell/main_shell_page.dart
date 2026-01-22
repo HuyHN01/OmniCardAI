@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/presentation/main_shell/create_card_modal.dart';
+import 'package:omni_card_ai/presentation/main_shell/floating_action_button_switcher.dart';
 
 class MainShellPage extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const MainShellPage({super.key, required this.navigationShell});
+  const MainShellPage({
+    super.key, 
+    required this.navigationShell
+  });
+
+  static const _libraryTabIndex = 1;
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +20,41 @@ class MainShellPage extends StatelessWidget {
 
     return Scaffold(
       body: navigationShell,
-      bottomNavigationBar: _buildBottomNavigationBar(),
-      floatingActionButton: _buildFloatingActionButton(context, currentTabIndex),
+      bottomNavigationBar: _BottomNavigationBar(
+        currentIndex: currentTabIndex, 
+        onTap: navigationShell.goBranch
+      ),
+      floatingActionButton: FloatingActionButtonSwitcher(
+        isVisible: _shouldShowFab(currentTabIndex), 
+        onPressed: () => _onCreateCardPressed(context)
+      )
     );
   }
 
-  
-  Widget _buildBottomNavigationBar() {
+
+  bool _shouldShowFab(int tabIndex) => tabIndex == _libraryTabIndex;
+
+  void _onCreateCardPressed(BuildContext context) {
+    showCreateCardModal(context);
+    debugPrint('Create new deck');
+  }
+}
+
+
+class _BottomNavigationBar extends StatelessWidget {
+  final int currentIndex;
+  final ValueChanged<int> onTap;
+
+  const _BottomNavigationBar({
+    required this.currentIndex,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: navigationShell.currentIndex,
-      onTap: navigationShell.goBranch,
+      currentIndex: currentIndex,
+      onTap: onTap,
       type: BottomNavigationBarType.fixed,
       backgroundColor: Colors.white,
       selectedItemColor: Colors.blue,
@@ -52,43 +82,4 @@ class MainShellPage extends StatelessWidget {
       ],
     );
   }
-
-  Widget _buildFloatingActionButton(
-    BuildContext context,
-    int tabIndex
-  ) {
-    return (
-      AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        transitionBuilder: (child, animation) {
-          return ScaleTransition(scale: animation, child: child);
-        },
-        child: _createFab(context, tabIndex) ?? const SizedBox.shrink(),
-      )
-    );
-  }
-  
-  Widget? _createFab(BuildContext context, int tabIndex) {
-    if (tabIndex == 1) {
-      return FloatingActionButton(
-        onPressed: () => _onCreateCardPressed(context),
-        backgroundColor: Colors.blue,
-        elevation: 8,
-        child: const Icon(Icons.add, size: 28, color: Colors.white),
-      );
-    }
-    
-    return null;
-  }
-
-  void _onCreateCardPressed(BuildContext context) {
-    //showCreateCardModal(context);
-    context.push(AppRoutes.createDeck);
-    debugPrint('Create new deck');
-  }
-
-//   bool _isFabVisibleForTab (int tabIndex) {
-//     return tabIndex == 1;
-//   }
 }
-
