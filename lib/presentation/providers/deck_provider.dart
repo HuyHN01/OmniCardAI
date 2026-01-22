@@ -9,19 +9,21 @@ class DeckNotifier extends _$DeckNotifier {
   IDeckRepository get _repository => ref.read(deckRepositoryProvider);
 
   @override
-  FutureOr<List<DeckModel>> build() {
-    return _repository.getAllDecks();
+  Stream<List<DeckModel>> build() {
+    return _repository.watchDecks(); 
   }
 
   Future<void> addDeck(String title, String desc) async {
-    state = const AsyncLoading();
-    state = await AsyncValue.guard(() async {
-      final newDeck = DeckModel()
-        ..title = title
-        ..description = desc
-        ..updatedAt = DateTime.now();
-      await _repository.saveDeck(newDeck);
-      return _repository.getAllDecks();
-    });
+    final newDeck = DeckModel()
+      ..title = title
+      ..description = desc
+      ..updatedAt = DateTime.now();
+
+    await _repository.saveDeck(newDeck); 
   }
+
+  Future<void> deleteDeck(int deckId) async {
+    await _repository.deleteDeck(deckId);
+  }
+    
 }
