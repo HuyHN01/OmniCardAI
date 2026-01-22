@@ -23,11 +23,5 @@ class DeckNotifier extends _$DeckNotifier {
       await _repository.saveDeck(newDeck);
       return _repository.getAllDecks();
     });
-
-    // KIỂM TRA LỖI SAU KHI GUARD CHẠY XONG
-    if (state.hasError) {
-      print("Lỗi thực sự là: ${state.error}");
-      print("Stacktrace: ${state.stackTrace}");
-    }
   }
 }

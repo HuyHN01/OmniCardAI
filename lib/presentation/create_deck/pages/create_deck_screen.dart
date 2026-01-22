@@ -118,8 +118,8 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
         'name': _nameController.text.trim(),
         'description': _descriptionController.text.trim(),
       });
-    } catch (e) {
-      // Nếu có lỗi, nó sẽ nhảy vào đây
+    } 
+    catch (e) {
       print("LỖI KHI LƯU: $e");
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

@@ -50,8 +50,8 @@ const DeckModelSchema = CollectionSchema(
     r'remoteId': IndexSchema(
       id: 6301175856541681032,
       name: r'remoteId',
-      unique: true,
-      replace: true,
+      unique: false,
+      replace: false,
       properties: [
         IndexPropertySchema(
           name: r'remoteId',
@@ -179,63 +179,6 @@ List<IsarLinkBase<dynamic>> _deckModelGetLinks(DeckModel object) {
 void _deckModelAttach(IsarCollection<dynamic> col, Id id, DeckModel object) {
   object.id = id;
   object.cards.attach(col, col.isar.collection<CardModel>(), r'cards', id);
-}
-
-extension DeckModelByIndex on IsarCollection<DeckModel> {
-  Future<DeckModel?> getByRemoteId(String? remoteId) {
-    return getByIndex(r'remoteId', [remoteId]);
-  }
-
-  DeckModel? getByRemoteIdSync(String? remoteId) {
-    return getByIndexSync(r'remoteId', [remoteId]);
-  }
-
-  Future<bool> deleteByRemoteId(String? remoteId) {
-    return deleteByIndex(r'remoteId', [remoteId]);
-  }
-
-  bool deleteByRemoteIdSync(String? remoteId) {
-    return deleteByIndexSync(r'remoteId', [remoteId]);
-  }
-
-  Future<List<DeckModel?>> getAllByRemoteId(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return getAllByIndex(r'remoteId', values);
-  }
-
-  List<DeckModel?> getAllByRemoteIdSync(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'remoteId', values);
-  }
-
-  Future<int> deleteAllByRemoteId(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'remoteId', values);
-  }
-
-  int deleteAllByRemoteIdSync(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'remoteId', values);
-  }
-
-  Future<Id> putByRemoteId(DeckModel object) {
-    return putByIndex(r'remoteId', object);
-  }
-
-  Id putByRemoteIdSync(DeckModel object, {bool saveLinks = true}) {
-    return putByIndexSync(r'remoteId', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByRemoteId(List<DeckModel> objects) {
-    return putAllByIndex(r'remoteId', objects);
-  }
-
-  List<Id> putAllByRemoteIdSync(
-    List<DeckModel> objects, {
-    bool saveLinks = true,
-  }) {
-    return putAllByIndexSync(r'remoteId', objects, saveLinks: saveLinks);
-  }
 }
 
 extension DeckModelQueryWhereSort

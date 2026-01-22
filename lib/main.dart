@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
+import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
 const String APPLICATION_NAME = 'OmniCard AI';
 
@@ -12,11 +13,13 @@ void main() async {
   
   runApp(
     ProviderScope(
+      overrides: [
+        isarProvider.overrideWithValue(IsarService.isar),
+      ],
       child: MyApp()
     )
   );
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

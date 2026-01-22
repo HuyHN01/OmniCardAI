@@ -10,7 +10,13 @@ class DeckRepositoryImpl implements IDeckRepository {
 
   @override
   Future<List<DeckModel>> getAllDecks() async {
-    return await isar.deckModels.where().findAll();
+    final decks = await isar.deckModels.where().findAll();
+
+    for (var deck in decks) {
+      await deck.cards.load();
+    }
+
+    return decks;
   }
 
   @override

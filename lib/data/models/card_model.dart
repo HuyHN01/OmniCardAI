@@ -6,7 +6,8 @@ part 'card_model.g.dart';
 class CardModel {
   Id id = Isar.autoIncrement;
 
-  @Index(unique: true, replace: true)
+  //@Index(unique: true, replace: true)
+  @Index()
   String? remoteId; // UID từ Firebase
 
   @Index(type: IndexType.value, caseSensitive: false)

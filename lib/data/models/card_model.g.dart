@@ -65,8 +65,8 @@ const CardModelSchema = CollectionSchema(
     r'remoteId': IndexSchema(
       id: 6301175856541681032,
       name: r'remoteId',
-      unique: true,
-      replace: true,
+      unique: false,
+      replace: false,
       properties: [
         IndexPropertySchema(
           name: r'remoteId',
@@ -219,63 +219,6 @@ List<IsarLinkBase<dynamic>> _cardModelGetLinks(CardModel object) {
 void _cardModelAttach(IsarCollection<dynamic> col, Id id, CardModel object) {
   object.id = id;
   object.deck.attach(col, col.isar.collection<DeckModel>(), r'deck', id);
-}
-
-extension CardModelByIndex on IsarCollection<CardModel> {
-  Future<CardModel?> getByRemoteId(String? remoteId) {
-    return getByIndex(r'remoteId', [remoteId]);
-  }
-
-  CardModel? getByRemoteIdSync(String? remoteId) {
-    return getByIndexSync(r'remoteId', [remoteId]);
-  }
-
-  Future<bool> deleteByRemoteId(String? remoteId) {
-    return deleteByIndex(r'remoteId', [remoteId]);
-  }
-
-  bool deleteByRemoteIdSync(String? remoteId) {
-    return deleteByIndexSync(r'remoteId', [remoteId]);
-  }
-
-  Future<List<CardModel?>> getAllByRemoteId(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return getAllByIndex(r'remoteId', values);
-  }
-
-  List<CardModel?> getAllByRemoteIdSync(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return getAllByIndexSync(r'remoteId', values);
-  }
-
-  Future<int> deleteAllByRemoteId(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return deleteAllByIndex(r'remoteId', values);
-  }
-
-  int deleteAllByRemoteIdSync(List<String?> remoteIdValues) {
-    final values = remoteIdValues.map((e) => [e]).toList();
-    return deleteAllByIndexSync(r'remoteId', values);
-  }
-
-  Future<Id> putByRemoteId(CardModel object) {
-    return putByIndex(r'remoteId', object);
-  }
-
-  Id putByRemoteIdSync(CardModel object, {bool saveLinks = true}) {
-    return putByIndexSync(r'remoteId', object, saveLinks: saveLinks);
-  }
-
-  Future<List<Id>> putAllByRemoteId(List<CardModel> objects) {
-    return putAllByIndex(r'remoteId', objects);
-  }
-
-  List<Id> putAllByRemoteIdSync(
-    List<CardModel> objects, {
-    bool saveLinks = true,
-  }) {
-    return putAllByIndexSync(r'remoteId', objects, saveLinks: saveLinks);
-  }
 }
 
 extension CardModelQueryWhereSort

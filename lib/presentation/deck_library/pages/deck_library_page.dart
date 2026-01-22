@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:omni_card_ai/presentation/providers/deck_provider.dart';
+import 'package:omni_card_ai/presentation/deck_library/widgets/deck_library_widgets.dart';
 
 /// ============ DECK LIBRARY SCREEN ============
 /// Màn hình thư viện hiển thị tất cả các bộ thẻ của user
 /// Có search functionality và filter options
-class DeckLibraryScreen extends StatefulWidget {
+class DeckLibraryScreen extends ConsumerStatefulWidget {
   const DeckLibraryScreen({super.key});
 
   @override
-  State<DeckLibraryScreen> createState() => _DeckLibraryScreenState();
+  ConsumerState<DeckLibraryScreen> createState() => _DeckLibraryScreenState();
 }
 
-class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
+class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
   final TextEditingController _searchController = TextEditingController();
   
   // ========== MOCK DATA (Replace with Provider/Riverpod) ==========
@@ -99,44 +101,70 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
             const SizedBox(height: 24),
             
             // ========== DECK LIST ==========
-            Expanded(
-              child: _filteredDecks.isEmpty
-                  ? EmptyLibraryState(
-                      message: _searchController.text.isEmpty
-                          ? 'Chưa có bộ thẻ nào'
-                          : 'Không tìm thấy kết quả',
-                      subtitle: _searchController.text.isEmpty
-                          ? 'Nhấn nút + để tạo bộ thẻ đầu tiên'
-                          : 'Thử tìm với từ khóa khác',
-                      icon: _searchController.text.isEmpty
-                          ? Icons.inbox_outlined
-                          : Icons.search_off,
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24),
-                      itemCount: _filteredDecks.length + 1, // +1 for footer
-                      itemBuilder: (context, index) {
-                        // Footer encouragement
-                        if (index == _filteredDecks.length) {
-                          return const EncouragementFooter();
-                        }
-                        
-                        final deck = _filteredDecks[index];
-                        return LibraryDeckCard(
-                          title: deck['title'],
-                          cardCount: deck['cardCount'],
-                          progress: deck['progress'],
-                          isNew: deck['isNew'],
-                          onTap: () {
-                            debugPrint('Open deck: ${deck['title']}');
-                            // TODO: Navigate to deck detail
+
+            
+            Consumer(
+              builder: (context, ref, child) {
+
+                final deckAsync = ref.watch(deckNotifierProvider);
+                
+                return Expanded(
+                  child: _filteredDecks.isEmpty
+                      ? EmptyLibraryState(
+                          message: _searchController.text.isEmpty
+                              ? 'Chưa có bộ thẻ nào'
+                              : 'Không tìm thấy kết quả',
+                          subtitle: _searchController.text.isEmpty
+                              ? 'Nhấn nút + để tạo bộ thẻ đầu tiên'
+                              : 'Thử tìm với từ khóa khác',
+                          icon: _searchController.text.isEmpty
+                              ? Icons.inbox_outlined
+                              : Icons.search_off,
+                        )
+                      : deckAsync.maybeWhen(
+                          data: (decks) {
+                            return ListView.builder(
+                              padding: const EdgeInsets.symmetric(horizontal: 24),
+                              itemCount: decks.length + 1, // +1 for footer
+                              itemBuilder: (context, index) {
+                                // Footer encouragement
+                                if (index == decks.length) {
+                                  return const EncouragementFooter();
+                                }
+
+                                final deck = decks[index];
+                                return LibraryDeckCard(
+                                  title: deck.title,
+                                  cardCount: deck.countCard,
+                                  progress: deck.calculateProgres,
+                                  isNew: deck.isNewDeck,
+                                  onTap: () {
+                                    debugPrint('Open deck: ${deck.title}');
+                                    // TODO: Navigate to deck detail
+                                  },
+                                  onMorePressed: () {
+                                    _showDeckOptions(context, deck.title);
+                                  },
+                                );
+                              },
+                            );
                           },
-                          onMorePressed: () {
-                            _showDeckOptions(context, deck['title']);
+                          orElse: () {
+                            return EmptyLibraryState(
+                              message: _searchController.text.isEmpty
+                                  ? 'Chưa có bộ thẻ nào'
+                                  : 'Không tìm thấy kết quả',
+                              subtitle: _searchController.text.isEmpty
+                                  ? 'Nhấn nút + để tạo bộ thẻ đầu tiên'
+                                  : 'Thử tìm với từ khóa khác',
+                              icon: _searchController.text.isEmpty
+                                  ? Icons.inbox_outlined
+                                  : Icons.search_off,
+                            );
                           },
-                        );
-                      },
-                    ),
+                      ),
+                );
+              },
             ),
           ],
         ),
@@ -264,290 +292,6 @@ class _DeckLibraryScreenState extends State<DeckLibraryScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-// ========== COPY CÁC WIDGET COMPONENTS TỪ deck_library_widgets.dart ==========
-
-class LibraryDeckCard extends StatelessWidget {
-  final String title;
-  final int cardCount;
-  final double? progress;
-  final bool isNew;
-  final VoidCallback onTap;
-  final VoidCallback onMorePressed;
-
-  const LibraryDeckCard({
-    super.key,
-    required this.title,
-    required this.cardCount,
-    this.progress,
-    this.isNew = false,
-    required this.onTap,
-    required this.onMorePressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF111827),
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '$cardCount thẻ',
-                            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: onMorePressed,
-                      icon: const Icon(Icons.more_vert),
-                      iconSize: 20,
-                      color: Colors.grey[600],
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                if (isNew)
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2196F3).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Text(
-                          'Mới',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF2196F3),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text('Chưa học lần nào', style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-                    ],
-                  )
-                else if (progress != null)
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(4),
-                          child: LinearProgressIndicator(
-                            value: progress,
-                            minHeight: 6,
-                            backgroundColor: Colors.grey.shade200,
-                            valueColor: const AlwaysStoppedAnimation(Color(0xFF2196F3)),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        '${(progress! * 100).toInt()}%',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF2196F3),
-                        ),
-                      ),
-                    ],
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class LibrarySearchBar extends StatelessWidget {
-  final TextEditingController controller;
-  final ValueChanged<String> onChanged;
-  final String hintText;
-
-  const LibrarySearchBar({
-    super.key,
-    required this.controller,
-    required this.onChanged,
-    this.hintText = 'Tìm kiếm bộ thẻ...',
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300, width: 1),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        style: const TextStyle(fontSize: 15),
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: TextStyle(fontSize: 15, color: Colors.grey[500]),
-          prefixIcon: Icon(Icons.search, color: Colors.grey[500], size: 22),
-          border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        ),
-      ),
-    );
-  }
-}
-
-class EncouragementFooter extends StatelessWidget {
-  const EncouragementFooter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      child: Column(
-        children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              color: const Color(0xFF2196F3).withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Icon(
-                Icons.auto_awesome,
-                size: 36,
-                color: const Color(0xFF2196F3).withOpacity(0.7),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Cố gắng lên!',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF111827)),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Ôn tập thẻ mỗi ngày để ghi nhớ tốt hơn',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 14, color: Colors.grey[600], height: 1.4),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class LibraryHeader extends StatelessWidget {
-  final VoidCallback onSettingsPressed;
-
-  const LibraryHeader({super.key, required this.onSettingsPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Thư viện của bạn',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Color(0xFF111827)),
-          ),
-          IconButton(
-            onPressed: onSettingsPressed,
-            icon: const Icon(Icons.settings),
-            iconSize: 24,
-            color: const Color(0xFF111827),
-            style: IconButton.styleFrom(backgroundColor: Colors.white, padding: const EdgeInsets.all(8)),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class EmptyLibraryState extends StatelessWidget {
-  final String message;
-  final String? subtitle;
-  final IconData icon;
-
-  const EmptyLibraryState({
-    super.key,
-    required this.message,
-    this.subtitle,
-    this.icon = Icons.inbox_outlined,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 80, color: Colors.grey[300]),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Color(0xFF111827)),
-            ),
-            if (subtitle != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                subtitle!,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }
