@@ -8,16 +8,21 @@ import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await IsarService.init();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        isarProvider.overrideWithValue(IsarService.isar),
-      ],
-      child: const OmniCardApp(),
-    ),
-  );
+  final isar = await IsarService.init();
+  try {
+    runApp(
+      ProviderScope(
+        overrides: [
+          isarProvider.overrideWithValue(isar),
+        ],
+        child: const OmniCardApp(),
+      ),
+    );
+  }
+  catch(e) {
+    debugPrint("Lỗi: $e");
+  }
+ 
 }
 
 class OmniCardApp extends StatelessWidget {

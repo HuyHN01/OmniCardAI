@@ -83,7 +83,7 @@ class DeckRepositoryImpl implements IDeckRepository {
 
   @override
   Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async{
-    isar.writeTxn(() async {
+    await isar.writeTxn(() async {
       final deck = await isar.deckModels.get(deckId);
 
       if (deck == null) return;
@@ -94,7 +94,7 @@ class DeckRepositoryImpl implements IDeckRepository {
       }
 
       await isar.cardModels.putAll(newCards);
-      await deck.cards.save();
+      //await deck.cards.save();
 
       deck.updatedAt = DateTime.now();
       await isar.deckModels.put(deck);

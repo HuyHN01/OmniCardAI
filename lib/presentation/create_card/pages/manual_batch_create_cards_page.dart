@@ -211,25 +211,26 @@ class _ManualBatchCreateCardsScreenState extends ConsumerState<ManualBatchCreate
         forms: completeCards
       );
 
-      if (!mounted) return;
+      if (mounted) {
+        // Return to previous screen
+        Navigator.pop(context, completeCards.length);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Đã tạo ${completeCards.length} thẻ mới'),
-          backgroundColor: AppTheme.accentGreen,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.radiusM),
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Đã tạo ${completeCards.length} thẻ mới'),
+            backgroundColor: AppTheme.accentGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppTheme.radiusM),
+            ),
+            margin: const EdgeInsets.all(16),
           ),
-          margin: const EdgeInsets.all(16),
-        ),
-      );
-
-      // Return to previous screen
-      Navigator.pop(context, completeCards.length);
-    } catch (e) {
-      if (!mounted) return;
-
+        );     
+      }
+    } 
+    catch (e) {
+      //if (!mounted) return;
+      debugPrint("Lỗi thuật: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Lỗi: ${e.toString()}'),
