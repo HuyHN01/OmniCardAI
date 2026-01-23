@@ -28,8 +28,31 @@ class DeckRepositoryImpl implements IDeckRepository {
   @override
   Future<void> deleteDeck(int id) async {
     await isar.writeTxn(() async {
+      // 1. Tìm và xóa tất cả các Card thuộc bộ thẻ này trước
+      // Điều này đảm bảo không còn Card nào "mồ côi" trong database
+      await isar.cardModels.filter().deck((q) => q.idEqualTo(id)).deleteAll();
+
+      // 2. Xóa chính bộ thẻ đó
       await isar.deckModels.delete(id);
     });
+  }
+
+  @override
+  Future<List<DeckModel>> searchDecks(String query) async {
+    if (query.isEmpty) {
+      return getAllDecks();
+    }
+    
+    final results = await isar.deckModels
+        .filter()
+        .titleContains(query, caseSensitive: false)
+        .findAll();
+
+    for (var deck in results) {
+      await deck.cards.load();
+    }
+    
+    return results;
   }
 
   @override

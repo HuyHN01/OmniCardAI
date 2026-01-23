@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/presentation/main_shell/create_card_modal.dart';
 import 'package:omni_card_ai/presentation/main_shell/floating_action_button_switcher.dart';
 
@@ -35,7 +36,7 @@ class MainShellPage extends StatelessWidget {
   bool _shouldShowFab(int tabIndex) => tabIndex == _libraryTabIndex;
 
   void _onCreateCardPressed(BuildContext context) {
-    showCreateCardModal(context);
+    context.push(AppRoutes.createDeck);
     debugPrint('Create new deck');
   }
 }
