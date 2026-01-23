@@ -9,4 +9,6 @@ abstract class IDeckRepository {
   Future<List<CardModel>> searchCards(String query);
   Stream<List<DeckModel>> watchDecks();
   Stream<DeckModel?> watchDeck(int id);
+
+  Future<void> addCardsToDeck(int deckId, List<CardModel> newCards);
 }

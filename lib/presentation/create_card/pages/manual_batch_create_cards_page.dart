@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/presentation/create_card/widgets/manual_flashcard_input_widget.dart';
 import 'package:omni_card_ai/presentation/create_card/widgets/card_form_model.dart';
+import 'package:omni_card_ai/presentation/providers/batch_card_provider.dart';
 /// ============ BATCH CREATE CARDS SCREEN ============
 /// Màn hình tạo nhiều thẻ cùng lúc
-class ManualBatchCreateCardsScreen extends StatefulWidget {
+class ManualBatchCreateCardsScreen extends ConsumerStatefulWidget {
   final int deckId;
   final String deckTitle;
 
@@ -15,11 +18,11 @@ class ManualBatchCreateCardsScreen extends StatefulWidget {
   });
 
   @override
-  State<ManualBatchCreateCardsScreen> createState() =>
+  ConsumerState<ManualBatchCreateCardsScreen> createState() =>
       _ManualBatchCreateCardsScreenState();
 }
 
-class _ManualBatchCreateCardsScreenState extends State<ManualBatchCreateCardsScreen> {
+class _ManualBatchCreateCardsScreenState extends ConsumerState<ManualBatchCreateCardsScreen> {
   final List<CardFormModel> _cards = [];
   final ScrollController _scrollController = ScrollController();
   bool _isSaving = false;
@@ -27,20 +30,18 @@ class _ManualBatchCreateCardsScreenState extends State<ManualBatchCreateCardsScr
   @override
   void initState() {
     super.initState();
-    // Start with one empty card
+
     _addNewCard();
   }
 
   @override
   void dispose() {
-    // Dispose all cards
     for (var card in _cards) {
       card.dispose();
     }
     _scrollController.dispose();
     super.dispose();
   }
-
   // ========== CARD MANAGEMENT ==========
   void _addNewCard() {
     setState(() {
@@ -205,9 +206,10 @@ class _ManualBatchCreateCardsScreenState extends State<ManualBatchCreateCardsScr
       //   deckId: widget.deckId,
       //   cards: completeCards.map((c) => c.toMap()).toList(),
       // );
-
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
+      await ref.read(batchCardNotifierProvider.notifier).saveAll(
+        deckId: widget.deckId, 
+        forms: completeCards
+      );
 
       if (!mounted) return;
 

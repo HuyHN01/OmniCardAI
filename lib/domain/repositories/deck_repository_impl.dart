@@ -80,4 +80,24 @@ class DeckRepositoryImpl implements IDeckRepository {
   Stream<DeckModel?> watchDeck(int id) {
     return isar.deckModels.watchObject(id, fireImmediately: true);
   }
+
+  @override
+  Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async{
+    isar.writeTxn(() async {
+      final deck = await isar.deckModels.get(deckId);
+
+      if (deck == null) return;
+
+      for (var card in newCards) {
+        card.deck.value = deck;
+        card.updatedAt = DateTime.now();
+      }
+
+      await isar.cardModels.putAll(newCards);
+      await deck.cards.save();
+
+      deck.updatedAt = DateTime.now();
+      await isar.deckModels.put(deck);
+    });
+  }
 }
