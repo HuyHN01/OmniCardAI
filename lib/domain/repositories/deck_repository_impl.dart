@@ -19,10 +19,14 @@ class DeckRepositoryImpl implements IDeckRepository {
   }
 
   @override
-  Future<void> saveDeck(DeckModel deck) async {
+  Future<int> saveDeck(DeckModel deck) async {
+    dynamic newId;
+
     await isar.writeTxn(() async {
-      await isar.deckModels.put(deck);
+      newId = await isar.deckModels.put(deck);
     });
+
+    return newId;
   }
 
   @override
@@ -70,5 +74,10 @@ class DeckRepositoryImpl implements IDeckRepository {
   @override
   Stream<List<DeckModel>> watchDecks() {
     return isar.deckModels.where().watch(fireImmediately: true);
+  }
+
+  @override
+  Stream<DeckModel?> watchDeck(int id) {
+    return isar.deckModels.watchObject(id, fireImmediately: true);
   }
 }

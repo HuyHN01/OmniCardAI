@@ -13,13 +13,15 @@ class DeckNotifier extends _$DeckNotifier {
     return _repository.watchDecks(); 
   }
 
-  Future<void> addDeck(String title, String desc) async {
+  Future<int> addDeck(String title, String desc) async {
     final newDeck = DeckModel()
       ..title = title
       ..description = desc
       ..updatedAt = DateTime.now();
 
-    await _repository.saveDeck(newDeck); 
+    final newId = await _repository.saveDeck(newDeck); 
+    
+    return newId;
   }
 
   Future<void> deleteDeck(int deckId) async {
