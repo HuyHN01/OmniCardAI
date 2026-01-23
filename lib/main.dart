@@ -33,5 +33,9 @@ class OmniCardApp extends StatelessWidget {
       routerConfig: goRouter,
       debugShowCheckedModeBanner: false,
     );
+
+    // return MaterialApp(
+    //   home: AIFlashcardGenerationScreen(deckId: '1'),
+    // );
   }
 }

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/presentation/deck_detail/widgets/deck_detail_widgets.dart';
+import 'package:omni_card_ai/presentation/deck_detail/pages/create_card_modal.dart';
+import 'package:omni_card_ai/presentation/main_shell/floating_action_button_switcher.dart';
 import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
 
 
@@ -164,7 +166,12 @@ class DeckDetailScreen extends ConsumerWidget {
         }, 
         error: (err, stack) => Center(child: Text('Lỗi: $err')), 
         loading: () => const Center(child: CircularProgressIndicator()),
-      )
+      ),
+      //=======FLOATING ACTION BUTTON ĐỂ TẠO CARD MỚI TRONG DESK=============
+      floatingActionButton: FloatingActionButtonSwitcher(
+        isVisible: true,
+        onPressed: () => showCreateCardModal(context, deckId: deckId),
+      ),
     );
   }
 

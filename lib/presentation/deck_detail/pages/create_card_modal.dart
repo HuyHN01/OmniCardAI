@@ -1,18 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/route_name.dart';
 
-void showCreateCardModal(BuildContext context) {
+void showCreateCardModal(
+  BuildContext context, 
+  {required int deckId}
+  ) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => const _CreateCardModalContent(),
+    builder: (context) =>  _CreateCardModalContent(deckId: deckId,),
   );
 }
 
 // --- Phần nội dung chính của Modal ---
 class _CreateCardModalContent extends StatelessWidget {
-  const _CreateCardModalContent();
+  final int deckId;
+
+  const _CreateCardModalContent({required this.deckId});
 
   @override
   Widget build(BuildContext context) {
@@ -93,6 +99,10 @@ class _CreateCardModalContent extends StatelessWidget {
             onTap: () {
               context.pop();
               // TODO: Navigate to AI Input Screen
+              context.pushNamed(
+                RouteName.aiGenerationCreateCard,
+                pathParameters: {'deckId': deckId.toString()}
+              );
               print("Selected: AI Input");
             },
           ),
@@ -109,6 +119,10 @@ class _CreateCardModalContent extends StatelessWidget {
             onTap: () {
               context.pop();
               // TODO: Navigate to Manual Create Screen
+              context.pushNamed(
+                RouteName.manualCreateCard,
+                pathParameters: {'deckId': deckId.toString()}
+              );
               print("Selected: Manual Input");
             },
           ),
