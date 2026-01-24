@@ -7,5 +7,11 @@ part 'deck_detail_provider.g.dart';
 @riverpod
 Stream<DeckModel?> deckDetail(DeckDetailRef ref, int deckId) {
   final repository = ref.watch(deckRepositoryProvider);
-  return repository.watchDeck(deckId);
+  
+  return repository.watchDeck(deckId).asyncMap((deck) async {
+    if (deck != null) {
+      await deck.cards.load(); 
+    }
+    return deck;
+  });
 }

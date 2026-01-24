@@ -6,7 +6,7 @@ part of 'deck_detail_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$deckDetailHash() => r'69bcd58ae7750ab475adcfff3ad4b373fa949e70';
+String _$deckDetailHash() => r'6999ea3240d8cc3373c97774a4739b9509d3b4b8';
 
 /// Copied from Dart SDK
 class _SystemHash {

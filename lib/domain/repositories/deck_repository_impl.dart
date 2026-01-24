@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:isar_community/isar.dart';
 import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/data/models/deck_model.dart';
@@ -22,15 +23,18 @@ class DeckRepositoryImpl implements IDeckRepository {
   Future<int> saveDeck(DeckModel deck) async {
     dynamic newId;
 
+    debugPrint('>>> BẮT ĐẦU TXN TẠI: [saveDeck]');
     await isar.writeTxn(() async {
       newId = await isar.deckModels.put(deck);
     });
+    debugPrint('>>> KÊT THÚC TXN TẠI: [saveDeck]');
 
     return newId;
   }
 
   @override
   Future<void> deleteDeck(int id) async {
+    debugPrint('>>> BẮT ĐẦU TXN TẠI: [deleteDeck]');
     await isar.writeTxn(() async {
       // 1. Tìm và xóa tất cả các Card thuộc bộ thẻ này trước
       // Điều này đảm bảo không còn Card nào "mồ côi" trong database
@@ -39,6 +43,7 @@ class DeckRepositoryImpl implements IDeckRepository {
       // 2. Xóa chính bộ thẻ đó
       await isar.deckModels.delete(id);
     });
+    debugPrint('>>> KẾT THÚC TXN TẠI: [deleteDeck]');
   }
 
   @override
@@ -82,22 +87,49 @@ class DeckRepositoryImpl implements IDeckRepository {
   }
 
   @override
-  Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async{
+Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async {
+  await isar.writeTxn(() async {
+    final deck = await isar.deckModels.get(deckId);
+    if (deck == null) return;
+
+    // 1. Gán giá trị link trong bộ nhớ
+    for (var card in newCards) {
+      card.deck.value = deck; 
+      card.updatedAt = DateTime.now();
+      card.isDirty = true;
+    }
+
+    // 2. Lưu Card vào DB (Lúc này card sẽ có ID, nhưng Link chưa được lưu vào bảng liên kết)
+    await isar.cardModels.putAll(newCards);
+
+    // 3. BƯỚC QUAN TRỌNG CÒN THIẾU: Lưu Link thủ công
+    // Thay vì put(deck) gây crash, ta lưu link từ phía Card.
+    // Việc này cập nhật bảng liên kết mà không đụng chạm trực tiếp đến Deck Object,
+    // giảm thiểu rủi ro kích hoạt Watcher của Deck.
+    for (var card in newCards) {
+      await card.deck.save(); 
+    }
+  });
+
+  // 4. (Tùy chọn) Cập nhật thời gian Deck ở một Transaction RIÊNG BIỆT
+  // Tách hẳn ra để đảm bảo an toàn tuyệt đối cho Transaction phía trên.
+  // Nếu không cần thiết phải update ngay lập tức, bạn có thể bỏ qua bước này.
+  _updateDeckTimestampSafe(deckId);
+}
+
+// Hàm phụ trợ để update timestamp an toàn
+Future<void> _updateDeckTimestampSafe(int deckId) async {
+  try {
     await isar.writeTxn(() async {
       final deck = await isar.deckModels.get(deckId);
-
-      if (deck == null) return;
-
-      for (var card in newCards) {
-        card.deck.value = deck;
-        card.updatedAt = DateTime.now();
+      if (deck != null) {
+        deck.updatedAt = DateTime.now();
+        await isar.deckModels.put(deck);
       }
-
-      await isar.cardModels.putAll(newCards);
-      //await deck.cards.save();
-
-      deck.updatedAt = DateTime.now();
-      await isar.deckModels.put(deck);
     });
+  } catch (e) {
+    // Nếu có lỗi ở đây (do UI conflict), nó cũng không ảnh hưởng đến việc tạo thẻ
+    debugPrint("Update timestamp failed silently: $e");
   }
+}
 }
