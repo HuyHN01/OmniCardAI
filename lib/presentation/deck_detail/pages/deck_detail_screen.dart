@@ -27,6 +27,7 @@ class DeckDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final deckAsync = ref.watch(deckDetailProvider(deckId));
+    final cardsAsync = ref.watch(deckCardsProvider(deckId));
 
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA),
@@ -53,115 +54,124 @@ class DeckDetailScreen extends ConsumerWidget {
               ),
             );
           }
+          
+          return cardsAsync.when(
+            error: (err, stack) => Center(child: Text('Lỗi tải thẻ: $err')), 
+            loading: () => const Center(child: CircularProgressIndicator()),
+            data: (cards) {
+              final newCards = cards
+                  .where((card) => card.stability == 0)
+                  .length;
+              final masteredCards = cards
+                  .where((card) => card.stability > 20)
+                  .length;
+              final learningCards = cards.length - newCards - masteredCards;
 
-          final cards = deck.cards.toList();
-
-          final newCards = cards.where((card) => card.stability ==0).length;
-          final masteredCards = cards.where((card) => card.stability > 20).length;
-          final learningCards = cards.length - newCards - masteredCards;
-
-          return SafeArea(
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // ========== HEADER INFO ==========
-                  Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: DeckHeaderInfo(
-                      title: deck.title, 
-                      totalCards: deck.countCard, 
-                      lastStudied: 'Chưa học' //Sẽ chỉnh sửa dựa trên deck.updateAt
-                    ),
-                  ),
-
-                  // ========== STATS CARDS ==========
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: Row(
-                      children: [
-                        DeckStatCard(
-                          label: 'Mới', 
-                          value: newCards, 
-                          dotColor: const Color(0xFF2196F3), 
-                          backgroundColor: const Color(0xFFE3F2FD)
+              return SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // ========== HEADER INFO ==========
+                      Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: DeckHeaderInfo(
+                          title: deck.title,
+                          totalCards: cards.length,
+                          lastStudied:
+                              'Chưa học', //Sẽ chỉnh sửa dựa trên deck.updateAt
                         ),
+                      ),
 
-                        const SizedBox(width: 12,),
+                      // ========== STATS CARDS ==========
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Row(
+                          children: [
+                            DeckStatCard(
+                              label: 'Mới',
+                              value: newCards,
+                              dotColor: const Color(0xFF2196F3),
+                              backgroundColor: const Color(0xFFE3F2FD),
+                            ),
 
-                        DeckStatCard(
-                          label: 'Đang học', 
-                          value: learningCards, 
-                          dotColor: const Color(0xFFFF9800), 
-                          backgroundColor: const Color(0xFFFFF3E0)
+                            const SizedBox(width: 12),
+
+                            DeckStatCard(
+                              label: 'Đang học',
+                              value: learningCards,
+                              dotColor: const Color(0xFFFF9800),
+                              backgroundColor: const Color(0xFFFFF3E0),
+                            ),
+
+                            const SizedBox(width: 12),
+
+                            DeckStatCard(
+                              label: 'Đã thuộc',
+                              value: masteredCards,
+                              dotColor: const Color(0xFF4CAF50),
+                              backgroundColor: const Color(0xFFE8F5E9),
+                            ),
+                          ],
                         ),
+                      ),
 
-                        const SizedBox(width: 12,),
+                      const SizedBox(height: 24),
 
-                        DeckStatCard(
-                          label: 'Đã thuộc', 
-                          value: masteredCards, 
-                          dotColor: const Color(0xFF4CAF50), 
-                          backgroundColor: const Color(0xFFE8F5E9)
+                      // ========== STUDY NOW BUTTON ==========
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: StudyNowButton(
+                          cardCount: newCards + learningCards,
+                          onPressed: () {} /* Navigate Study */,
                         ),
-                      ],
-                    ),
+                      ),
+
+                      const SizedBox(height: 32),
+
+                      // ========== CARD LIST SECTION ==========
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: DeckDetailSectionHeader(
+                          title: 'Danh sách thẻ (${cards.length})',
+                          onActionPressed: () {}, // TODO: Sort
+                          actionLabel: 'Sắp xếp',
+                        ),
+                      ),
+
+                      const SizedBox(height: 16),
+
+                      // ========== FLASHCARD LIST ==========
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: cards.length,
+                          itemBuilder: (context, index) {
+                            final card = cards[index];
+                            final status = _getCardStatus(card);
+
+                            return FlashcardListItem(
+                              question: card.term,
+                              answer: card.definition,
+                              icon: Icons.text_fields, //TODO: Logic Icon
+                              iconColor: Colors.blue,
+                              iconBackgroundColor: Colors.blue.shade50,
+                              statusColor: _getStatusColor(status),
+                              onTap: () {}, //Triển khai sau
+                              onEdit: () {}, //Triển khai sau
+                            );
+                          },
+                        ),
+                      ),
+
+                      const SizedBox(height: 100),
+                    ],
                   ),
-
-                  const SizedBox(height: 24,),
-
-                  // ========== STUDY NOW BUTTON ==========
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: StudyNowButton(
-                      cardCount: newCards + learningCards, 
-                      onPressed: () {} /* Navigate Study */
-                    ),
-                  ),
-
-                  const SizedBox(height: 32,),
-
-                  // ========== CARD LIST SECTION ==========
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: DeckDetailSectionHeader(
-                      title: 'Danh sách thẻ (${cards.length})',
-                      onActionPressed: () {},// TODO: Sort
-                      actionLabel: 'Sắp xếp',
-                    )
-                  ),
-
-                  const SizedBox(height: 16,),
-
-                  // ========== FLASHCARD LIST ==========
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: cards.length,
-                      itemBuilder: (context, index) {
-                        final card = cards[index];
-                        final status = _getCardStatus(card);
-
-                        return FlashcardListItem(
-                          question: card.term, 
-                          answer: card.definition, 
-                          icon: Icons.text_fields, //TODO: Logic Icon
-                          iconColor: Colors.blue, 
-                          iconBackgroundColor: Colors.blue.shade50, 
-                          statusColor: _getStatusColor(status), 
-                          onTap: () {}, //Triển khai sau
-                          onEdit: () {} //Triển khai sau
-                        );
-                      },
-                    ),
-                  ),
-
-                  const SizedBox(height: 100,)
-                ],
-              ),
-            )
+                ),
+              );
+            },
           );
         }, 
         error: (err, stack) => Center(child: Text('Lỗi: $err')), 

@@ -11,4 +11,5 @@ abstract class IDeckRepository {
   Stream<DeckModel?> watchDeck(int id);
 
   Future<void> addCardsToDeck(int deckId, List<CardModel> newCards);
+  Stream<List<CardModel>> watchCardsInDeck(int deckId);
 }

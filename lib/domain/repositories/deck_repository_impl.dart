@@ -119,17 +119,28 @@ Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async {
 
 // Hàm phụ trợ để update timestamp an toàn
 Future<void> _updateDeckTimestampSafe(int deckId) async {
-  try {
-    await isar.writeTxn(() async {
-      final deck = await isar.deckModels.get(deckId);
-      if (deck != null) {
-        deck.updatedAt = DateTime.now();
-        await isar.deckModels.put(deck);
-      }
-    });
-  } catch (e) {
-    // Nếu có lỗi ở đây (do UI conflict), nó cũng không ảnh hưởng đến việc tạo thẻ
-    debugPrint("Update timestamp failed silently: $e");
+    try {
+      await isar.writeTxn(() async {
+        final deck = await isar.deckModels.get(deckId);
+        if (deck != null) {
+          deck.updatedAt = DateTime.now();
+          await isar.deckModels.put(deck);
+        }
+      });
+    } 
+    catch (e) {
+      // Nếu có lỗi ở đây (do UI conflict), nó cũng không ảnh hưởng đến việc tạo thẻ
+      debugPrint("Update timestamp failed silently: $e");
+    }
   }
-}
+
+  @override
+Stream<List<CardModel>> watchCardsInDeck(int deckId) {
+  // Theo dõi trực tiếp collection CardModel với filter theo deckId
+  // Isar sẽ báo động mỗi khi bất kỳ thẻ nào trong bộ này được thêm/sửa/xóa
+  return isar.cardModels
+      .filter()
+      .deck((q) => q.idEqualTo(deckId))
+      .watch(fireImmediately: true);
+  }
 }
