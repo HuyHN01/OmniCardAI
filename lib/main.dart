@@ -4,20 +4,26 @@ import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
+import 'package:omni_card_ai/presentation/study/pages/study_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await IsarService.init();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        isarProvider.overrideWithValue(IsarService.isar),
-      ],
-      child: const OmniCardApp(),
-    ),
-  );
+  final isar = await IsarService.init();
+  try {
+    runApp(
+      ProviderScope(
+        overrides: [
+          isarProvider.overrideWithValue(isar),
+        ],
+        child: const OmniCardApp(),
+      ),
+    );
+  }
+  catch(e) {
+    debugPrint("Lỗi: $e");
+  }
+ 
 }
 
 class OmniCardApp extends StatelessWidget {
@@ -27,11 +33,15 @@ class OmniCardApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: _appTitle,
-      theme: AppTheme.lightTheme,
-      routerConfig: goRouter,
-      debugShowCheckedModeBanner: false,
+    // return MaterialApp.router(
+    //   title: _appTitle,
+    //   theme: AppTheme.lightTheme,
+    //   routerConfig: goRouter,
+    //   debugShowCheckedModeBanner: false,
+    // );
+
+    return MaterialApp(
+      home: StudyScreen(),
     );
   }
 }

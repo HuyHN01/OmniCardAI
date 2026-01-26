@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/data/models/deck_model.dart';
 import 'package:omni_card_ai/presentation/deck_library/pages/edit_deck_modal.dart';
 import 'package:omni_card_ai/presentation/providers/deck_provider.dart';
@@ -76,14 +77,22 @@ class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
                       }
 
                       final deck = decks[index];
+                      bool _isNavigating = false; //Chặn Double Tap Khi Điều Hướng
+
                       return LibraryDeckCard(
                         title: deck.title,
                         cardCount: deck.countCard,
                         progress: deck.calculateProgres,
                         isNew: deck.isNewDeck,
-                        onTap: () {
+                        onTap: () async {
+                          //Chặn Double Tap Khi Điều Hướng
+                          if (_isNavigating) return;
+                          _isNavigating = true;
+                          
                           debugPrint('Open deck: ${deck.title}');
-                          // TODO: Navigate to deck detail
+                          await context.push('/deck-detail/${deck.id}');
+                          
+                          _isNavigating = false;
                         },
                         onMorePressed: () {
                           _showDeckOptions(context, deck);

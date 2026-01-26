@@ -25,7 +25,7 @@ class CardModel {
 
   // Sync Metadata
   DateTime updatedAt = DateTime.now();
-  bool isDirty = true; 
+  bool isDirty = true; //Báo hiệu rằng bản ghi hiện tại mới hơn bản ghi trên firebase
 
   final deck = IsarLink<DeckModel>();
 }
