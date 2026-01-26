@@ -51,7 +51,7 @@ class DeckRepositoryImpl implements IDeckRepository {
     if (query.isEmpty) {
       return getAllDecks();
     }
-    
+
     final results = await isar.deckModels
         .filter()
         .titleContains(query, caseSensitive: false)
@@ -60,7 +60,7 @@ class DeckRepositoryImpl implements IDeckRepository {
     for (var deck in results) {
       await deck.cards.load();
     }
-    
+
     return results;
   }
 
@@ -87,38 +87,38 @@ class DeckRepositoryImpl implements IDeckRepository {
   }
 
   @override
-Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async {
-  await isar.writeTxn(() async {
-    final deck = await isar.deckModels.get(deckId);
-    if (deck == null) return;
+  Future<void> addCardsToDeck(int deckId, List<CardModel> newCards) async {
+    await isar.writeTxn(() async {
+      final deck = await isar.deckModels.get(deckId);
+      if (deck == null) return;
 
-    // 1. Gán giá trị link trong bộ nhớ
-    for (var card in newCards) {
-      card.deck.value = deck; 
-      card.updatedAt = DateTime.now();
-      card.isDirty = true;
-    }
+      // 1. Gán giá trị link trong bộ nhớ
+      for (var card in newCards) {
+        card.deck.value = deck;
+        card.updatedAt = DateTime.now();
+        card.isDirty = true;
+      }
 
-    // 2. Lưu Card vào DB (Lúc này card sẽ có ID, nhưng Link chưa được lưu vào bảng liên kết)
-    await isar.cardModels.putAll(newCards);
+      // 2. Lưu Card vào DB (Lúc này card sẽ có ID, nhưng Link chưa được lưu vào bảng liên kết)
+      await isar.cardModels.putAll(newCards);
 
-    // 3. BƯỚC QUAN TRỌNG CÒN THIẾU: Lưu Link thủ công
-    // Thay vì put(deck) gây crash, ta lưu link từ phía Card.
-    // Việc này cập nhật bảng liên kết mà không đụng chạm trực tiếp đến Deck Object,
-    // giảm thiểu rủi ro kích hoạt Watcher của Deck.
-    for (var card in newCards) {
-      await card.deck.save(); 
-    }
-  });
+      // 3. BƯỚC QUAN TRỌNG CÒN THIẾU: Lưu Link thủ công
+      // Thay vì put(deck) gây crash, ta lưu link từ phía Card.
+      // Việc này cập nhật bảng liên kết mà không đụng chạm trực tiếp đến Deck Object,
+      // giảm thiểu rủi ro kích hoạt Watcher của Deck.
+      for (var card in newCards) {
+        await card.deck.save();
+      }
+    });
 
-  // 4. (Tùy chọn) Cập nhật thời gian Deck ở một Transaction RIÊNG BIỆT
-  // Tách hẳn ra để đảm bảo an toàn tuyệt đối cho Transaction phía trên.
-  // Nếu không cần thiết phải update ngay lập tức, bạn có thể bỏ qua bước này.
-  _updateDeckTimestampSafe(deckId);
-}
+    // 4. (Tùy chọn) Cập nhật thời gian Deck ở một Transaction RIÊNG BIỆT
+    // Tách hẳn ra để đảm bảo an toàn tuyệt đối cho Transaction phía trên.
+    // Nếu không cần thiết phải update ngay lập tức, bạn có thể bỏ qua bước này.
+    _updateDeckTimestampSafe(deckId);
+  }
 
-// Hàm phụ trợ để update timestamp an toàn
-Future<void> _updateDeckTimestampSafe(int deckId) async {
+  // Hàm phụ trợ để update timestamp an toàn
+  Future<void> _updateDeckTimestampSafe(int deckId) async {
     try {
       await isar.writeTxn(() async {
         final deck = await isar.deckModels.get(deckId);
@@ -127,20 +127,30 @@ Future<void> _updateDeckTimestampSafe(int deckId) async {
           await isar.deckModels.put(deck);
         }
       });
-    } 
-    catch (e) {
+    } catch (e) {
       // Nếu có lỗi ở đây (do UI conflict), nó cũng không ảnh hưởng đến việc tạo thẻ
       debugPrint("Update timestamp failed silently: $e");
     }
   }
 
   @override
-Stream<List<CardModel>> watchCardsInDeck(int deckId) {
-  // Theo dõi trực tiếp collection CardModel với filter theo deckId
-  // Isar sẽ báo động mỗi khi bất kỳ thẻ nào trong bộ này được thêm/sửa/xóa
-  return isar.cardModels
-      .filter()
-      .deck((q) => q.idEqualTo(deckId))
-      .watch(fireImmediately: true);
+  Stream<List<CardModel>> watchCardsInDeck(int deckId) {
+    // Theo dõi trực tiếp collection CardModel với filter theo deckId
+    // Isar sẽ báo động mỗi khi bất kỳ thẻ nào trong bộ này được thêm/sửa/xóa
+    return isar.cardModels
+        .filter()
+        .deck((q) => q.idEqualTo(deckId))
+        .watch(fireImmediately: true);
+  }
+
+  @override
+  Future<List<CardModel>> getDueCards(int deckId) async {
+    final now = DateTime.now();
+    return await isar.cardModels
+        .filter()
+        .deck((q) => q.idEqualTo(deckId))
+        .nextReviewLessThan(now)
+        .sortByNextReview()
+        .findAll();
   }
 }
