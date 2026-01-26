@@ -29,6 +29,17 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
     final sessionState = ref.watch(studySessionProvider(widget.deckId));
     final notifier = ref.read(studySessionProvider(widget.deckId).notifier);
 
+    ref.listen<StudySessionState>(
+      studySessionProvider(widget.deckId),
+      (previous, next) {
+        // Chỉ hiện dialog khi trạng thái chuyển từ "chưa xong" sang "xong"
+        if (!previous!.isFinished && next.isFinished) {
+          // Dùng microtask để đảm bảo việc vẽ UI hoàn tất trước khi hiện dialog
+          Future.microtask(() => _showCompletionDialog(next.total));
+        }
+      },
+    );
+
     if (sessionState.isLoading || deckAsync.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -66,10 +77,6 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
           ),
         ),
       );
-    }
-
-    if (sessionState.isFinished) {
-      _showCompletionDialog(sessionState.total);
     }
 
     final currentCard = sessionState.currentCard!;
@@ -151,7 +158,7 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
                         imageUrl: '' ,//Bổ sung field image url
                         tag: '' ,//Bổ sung field tab
                         hint: currentCard.mnemonic,
-                        showAnswer: false,
+                        showAnswer: true,
                       ),
                       showBack: _showAnswer,
                     ),
@@ -232,11 +239,25 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
     );
   }
 
-  void _handleRating(StudyNotifier notifier, int rating) {
-    notifier.rateCard(rating);
-    setState(() {
-      _showAnswer = false; // Reset lật thẻ cho thẻ tiếp theo
-    });
+  Future<void> _handleRating(StudyNotifier notifier, int rating) async {
+    try {
+      // Show loading nếu cần thiết (optional)
+      
+      // 1. Chờ DB lưu xong và StateNotifier cập nhật Index mới
+      await notifier.rateCard(rating); 
+
+      // 2. Sau khi dữ liệu đã là thẻ mới, ta mới update UI
+      if (mounted) {
+        setState(() {
+          _showAnswer = false; // Reset về mặt trước -> Lúc này FlippableCard sẽ hiện mặt trước của THẺ MỚI
+        });
+      }
+    } catch (e) {
+      debugPrint("Lỗi khi đánh giá thẻ: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Lỗi lưu kết quả: $e")),
+      );
+    }
   }
 
   void _showCompletionDialog(int numberOfCardsDone) {
