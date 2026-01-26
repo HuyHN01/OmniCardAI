@@ -4,7 +4,6 @@ import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
-import 'package:omni_card_ai/presentation/study/pages/study_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,15 +32,11 @@ class OmniCardApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return MaterialApp.router(
-    //   title: _appTitle,
-    //   theme: AppTheme.lightTheme,
-    //   routerConfig: goRouter,
-    //   debugShowCheckedModeBanner: false,
-    // );
-
-    return MaterialApp(
-      home: StudyScreen(),
+    return MaterialApp.router(
+      title: _appTitle,
+      theme: AppTheme.lightTheme,
+      routerConfig: goRouter,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

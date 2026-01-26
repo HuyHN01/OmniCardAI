@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:omni_card_ai/data/models/card_model.dart';
 
 class Sm2Service {
@@ -40,8 +39,9 @@ class Sm2Service {
   }
 
   String _determineStatus(CardModel card) {
-    if (card.repetition == 0) return 'learning'; // Đang học lại
-    if (card.interval > 21) return 'mastered';   // Đã thuộc (interval > 3 tuần)
-    return 'review';                             // Đang ôn tập
+    if (card.interval > 21) {
+      return 'mastered';
+    }
+    return 'learning';
   }
 }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/route_name.dart';
 import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/presentation/deck_detail/widgets/deck_detail_widgets.dart';
 import 'package:omni_card_ai/presentation/deck_detail/pages/create_card_modal.dart';
@@ -16,13 +18,6 @@ class DeckDetailScreen extends ConsumerWidget {
     super.key,
     required this.deckId,
   });
-
-  // Helper để xác định trạng thái thẻ (Logic tạm thời)
-  String _getCardStatus(CardModel card) {
-    if (card.stability == 0) return 'new';
-    if (card.stability > 20) return 'mastered';
-    return 'learning';
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,12 +55,14 @@ class DeckDetailScreen extends ConsumerWidget {
             loading: () => const Center(child: CircularProgressIndicator()),
             data: (cards) {
               final newCards = cards
-                  .where((card) => card.stability == 0)
+                  .where((card) => card.status == 'new')
                   .length;
               final masteredCards = cards
-                  .where((card) => card.stability > 20)
+                  .where((card) => card.status == 'mastered')
                   .length;
-              final learningCards = cards.length - newCards - masteredCards;
+              final learningCards = cards
+                  .where((card) => card.status == 'learning')
+                  .length;
 
               return SafeArea(
                 child: SingleChildScrollView(
@@ -123,7 +120,12 @@ class DeckDetailScreen extends ConsumerWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 24),
                         child: StudyNowButton(
                           cardCount: newCards + learningCards,
-                          onPressed: () {} /* Navigate Study */,
+                          onPressed: () {
+                            context.pushNamed(
+                              RouteName.study,
+                              pathParameters: {'deckId': deck.id.toString()}
+                            );
+                          },
                         ),
                       ),
 
@@ -150,7 +152,6 @@ class DeckDetailScreen extends ConsumerWidget {
                           itemCount: cards.length,
                           itemBuilder: (context, index) {
                             final card = cards[index];
-                            final status = _getCardStatus(card);
 
                             return FlashcardListItem(
                               question: card.term,
@@ -158,7 +159,7 @@ class DeckDetailScreen extends ConsumerWidget {
                               icon: Icons.text_fields, //TODO: Logic Icon
                               iconColor: Colors.blue,
                               iconBackgroundColor: Colors.blue.shade50,
-                              statusColor: _getStatusColor(status),
+                              statusColor: _getStatusColor(card.status),
                               onTap: () {}, //Triển khai sau
                               onEdit: () {}, //Triển khai sau
                             );

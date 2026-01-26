@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar_community/isar.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
 import 'package:omni_card_ai/presentation/providers/study_provider.dart';
 import 'package:omni_card_ai/presentation/study/widgets/study_widgets.dart';
 
@@ -9,12 +10,10 @@ import 'package:omni_card_ai/presentation/study/widgets/study_widgets.dart';
 /// Màn hình học flashcard với flip animation và rating
 class StudyScreen extends ConsumerStatefulWidget {
   final int deckId;
-  final String deckTitle;
 
   const StudyScreen({
     super.key,
     required this.deckId,
-    required this.deckTitle
   });
 
   @override
@@ -26,17 +25,46 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final deckAsync = ref.watch(deckDetailProvider(widget.deckId));
     final sessionState = ref.watch(studySessionProvider(widget.deckId));
     final notifier = ref.read(studySessionProvider(widget.deckId).notifier);
 
-    if (sessionState.isLoading) {
+    if (sessionState.isLoading || deckAsync.isLoading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
+    if (deckAsync.hasError || !deckAsync.hasValue || deckAsync.value == null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: const Center(child: Text("Không tìm thấy bộ thẻ!")),
+      );
+    }
+    
+    final deck = deckAsync.value!;
+
     if (sessionState.cards.isEmpty) {
       return Scaffold(
-        appBar: AppBar(title: Text(widget.deckTitle)),
-        body: const Center(child: Text("Tuyệt vời! Bạn đã hoàn thành bài học hôm nay.")),
+        appBar: AppBar(title: Text(deck.title)), // Dùng title từ DeckModel
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.check_circle_outline, size: 64, color: Colors.green),
+              const SizedBox(height: 16),
+              Text(
+                "Đã hoàn thành!",
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 8),
+              const Text("Không còn thẻ nào cần học trong bộ này."),
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () => context.pop(),
+                child: const Text("Quay lại"),
+              )
+            ],
+          ),
+        ),
       );
     }
 
@@ -76,7 +104,7 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
                             ),
                             const SizedBox(height: 4,),
                             Text(
-                              widget.deckTitle,
+                              deck.title,
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -134,12 +162,81 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
 
             // ========== RATING BUTTONS ==========
             _showAnswer 
-              ? Padding(padding: padding)
-              : Padding(padding: padding)
+              ? Padding(
+                padding: const EdgeInsets.all(24),
+                child: Row(
+                  children: [
+                    // MAPPING: 1 (Quên) -> 2 (Khó) -> 3 (Được) -> 4 (Dễ) -> 5 (Rất dễ)
+                    // Trong SM-2, Grade < 3 là Fail. Nên ta map:
+                    // Quên -> 1
+                    // Khó -> 3
+                    // Được -> 4
+                    // Dễ -> 5
+                    RatingButton(
+                      label: 'QUÊN', 
+                      interval: '< 1p', //TODO:Hiển thị interval dự kiến thực tế từ SM2 
+                      backgroundColor: const Color(0xFFFFEBEE), 
+                      textColor: const Color(0xFFE53935), 
+                      onPressed: () => _handleRating(notifier, 1)
+                    ),
+                    RatingButton(
+                      label: 'KHÓ',
+                      interval: '1p',
+                      backgroundColor: const Color(0xFFFFF3E0),
+                      textColor: const Color(0xFFFF9800),
+                      onPressed: () => _handleRating(notifier, 3),
+                    ),
+                    RatingButton(
+                      label: 'ĐƯỢC',
+                      interval: '3n',
+                      backgroundColor: const Color(0xFFE3F2FD),
+                      textColor: const Color(0xFF2196F3),
+                      onPressed: () => _handleRating(notifier, 4),
+                    ),
+                    RatingButton(
+                      label: 'DỄ',
+                      interval: '7n',
+                      backgroundColor: const Color(0xFFE8F5E9),
+                      textColor: const Color(0xFF4CAF50),
+                      onPressed: () => _handleRating(notifier, 5),
+                    ),
+                  ],
+                ),
+              )
+              : Padding(
+                padding: const EdgeInsets.all(24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _flipCard,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF2196F3),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadiusGeometry.circular(16)
+                      )
+                    ),
+                    child: const Text(
+                      'Hiện đáp án',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    )
+                  ),
+                ),
+              )
           ],
         ),
       ),
     );
+  }
+
+  void _handleRating(StudyNotifier notifier, int rating) {
+    notifier.rateCard(rating);
+    setState(() {
+      _showAnswer = false; // Reset lật thẻ cho thẻ tiếp theo
+    });
   }
 
   void _showCompletionDialog(int numberOfCardsDone) {

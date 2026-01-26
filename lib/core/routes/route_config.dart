@@ -11,6 +11,7 @@ import 'package:omni_card_ai/presentation/home/pages/home_page.dart';
 import 'package:omni_card_ai/presentation/main_shell/main_shell_page.dart';
 import 'package:omni_card_ai/presentation/profile/pages/profile_page.dart';
 import 'package:omni_card_ai/presentation/stats/pages/stats_screen.dart';
+import 'package:omni_card_ai/presentation/study/pages/study_screen.dart';
 
 
 final GoRouter goRouter = GoRouter(
@@ -25,7 +26,7 @@ final GoRouter goRouter = GoRouter(
       builder: (context, state) => CreateDeckScreen(),
     ),
     GoRoute(
-      path: AppRoutes.deckDetail,
+      path: AppRoutes.deckDetail, /*/deck-detail/:deckId/'*/
       name: RouteName.deckDetail,
       builder: (context, state) {
         final deckIdString = state.pathParameters['deckId']!;
@@ -53,6 +54,16 @@ final GoRouter goRouter = GoRouter(
 
             return AIFlashcardGenerationScreen(deckId: deckId);
           },
+        ),
+        GoRoute(
+          path: AppRoutes.study,
+          name: RouteName.study,
+          builder: (context, state) {
+            final deckIdString = state.pathParameters['deckId']!;
+            final deckId = int.parse(deckIdString);
+
+            return StudyScreen(deckId: deckId);
+          }
         ),
       ]
     ),
