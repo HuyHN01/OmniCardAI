@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/core/routes/route_name.dart';
 import 'package:omni_card_ai/presentation/create_card/pages/ai_flashcard_generation_page.dart';
+import 'package:omni_card_ai/presentation/create_card/pages/ai_flashcard_review_page.dart';
 import 'package:omni_card_ai/presentation/create_card/pages/manual_batch_create_cards_page.dart';
 import 'package:omni_card_ai/presentation/create_deck/pages/create_deck_screen.dart';
 import 'package:omni_card_ai/presentation/deck_detail/pages/deck_detail_screen.dart';
@@ -54,6 +55,23 @@ final GoRouter goRouter = GoRouter(
 
             return AIFlashcardGenerationScreen(deckId: deckId);
           },
+          routes: [
+            GoRoute(
+              path: AppRoutes.aiGenerationReview,
+              name: RouteName.aiGenerationReview,
+              builder: (context, state) {
+                final deckIdString = state.pathParameters['deckId']!;
+                final cards = state.extra as List<Map<String, String>>;
+                final deckId = int.parse(deckIdString);
+
+                return AIFlashcardReviewScreen(
+                  generatedCards: cards,
+                  initialDeckId: deckId,
+                  
+                );
+              },
+            )
+          ]
         ),
         GoRoute(
           path: AppRoutes.study,
