@@ -5,6 +5,7 @@ class RouteName {
   static const String createDeck = 'createDeck';
 
   static const String deckDetail = 'deckDetail';
+  static const String study = "study";
   static const String manualCreateCard = 'manualCreateCard';
   static const String aiGenerationCreateCard = 'aiGenerationCreatecCard';
   static const String aiGenerationReview = 'reviewCard';

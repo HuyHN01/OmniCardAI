@@ -22,35 +22,37 @@ const CardModelSchema = CollectionSchema(
       name: r'definition',
       type: IsarType.string,
     ),
-    r'difficulty': PropertySchema(
+    r'easinessFactor': PropertySchema(
       id: 1,
-      name: r'difficulty',
-      type: IsarType.long,
+      name: r'easinessFactor',
+      type: IsarType.double,
     ),
-    r'isDirty': PropertySchema(id: 2, name: r'isDirty', type: IsarType.bool),
+    r'interval': PropertySchema(id: 2, name: r'interval', type: IsarType.long),
+    r'isDirty': PropertySchema(id: 3, name: r'isDirty', type: IsarType.bool),
     r'mnemonic': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'mnemonic',
       type: IsarType.string,
     ),
     r'nextReview': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'nextReview',
       type: IsarType.dateTime,
     ),
     r'remoteId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'remoteId',
       type: IsarType.string,
     ),
-    r'stability': PropertySchema(
-      id: 6,
-      name: r'stability',
+    r'repetition': PropertySchema(
+      id: 7,
+      name: r'repetition',
       type: IsarType.long,
     ),
-    r'term': PropertySchema(id: 7, name: r'term', type: IsarType.string),
+    r'status': PropertySchema(id: 8, name: r'status', type: IsarType.string),
+    r'term': PropertySchema(id: 9, name: r'term', type: IsarType.string),
     r'updatedAt': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -101,6 +103,19 @@ const CardModelSchema = CollectionSchema(
         ),
       ],
     ),
+    r'nextReview': IndexSchema(
+      id: 316564737852968787,
+      name: r'nextReview',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'nextReview',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
   },
   links: {
     r'deck': LinkSchema(
@@ -137,6 +152,7 @@ int _cardModelEstimateSize(
       bytesCount += 3 + value.length * 3;
     }
   }
+  bytesCount += 3 + object.status.length * 3;
   bytesCount += 3 + object.term.length * 3;
   return bytesCount;
 }
@@ -148,14 +164,16 @@ void _cardModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeString(offsets[0], object.definition);
-  writer.writeLong(offsets[1], object.difficulty);
-  writer.writeBool(offsets[2], object.isDirty);
-  writer.writeString(offsets[3], object.mnemonic);
-  writer.writeDateTime(offsets[4], object.nextReview);
-  writer.writeString(offsets[5], object.remoteId);
-  writer.writeLong(offsets[6], object.stability);
-  writer.writeString(offsets[7], object.term);
-  writer.writeDateTime(offsets[8], object.updatedAt);
+  writer.writeDouble(offsets[1], object.easinessFactor);
+  writer.writeLong(offsets[2], object.interval);
+  writer.writeBool(offsets[3], object.isDirty);
+  writer.writeString(offsets[4], object.mnemonic);
+  writer.writeDateTime(offsets[5], object.nextReview);
+  writer.writeString(offsets[6], object.remoteId);
+  writer.writeLong(offsets[7], object.repetition);
+  writer.writeString(offsets[8], object.status);
+  writer.writeString(offsets[9], object.term);
+  writer.writeDateTime(offsets[10], object.updatedAt);
 }
 
 CardModel _cardModelDeserialize(
@@ -166,15 +184,17 @@ CardModel _cardModelDeserialize(
 ) {
   final object = CardModel();
   object.definition = reader.readString(offsets[0]);
-  object.difficulty = reader.readLong(offsets[1]);
+  object.easinessFactor = reader.readDouble(offsets[1]);
   object.id = id;
-  object.isDirty = reader.readBool(offsets[2]);
-  object.mnemonic = reader.readStringOrNull(offsets[3]);
-  object.nextReview = reader.readDateTime(offsets[4]);
-  object.remoteId = reader.readStringOrNull(offsets[5]);
-  object.stability = reader.readLong(offsets[6]);
-  object.term = reader.readString(offsets[7]);
-  object.updatedAt = reader.readDateTime(offsets[8]);
+  object.interval = reader.readLong(offsets[2]);
+  object.isDirty = reader.readBool(offsets[3]);
+  object.mnemonic = reader.readStringOrNull(offsets[4]);
+  object.nextReview = reader.readDateTime(offsets[5]);
+  object.remoteId = reader.readStringOrNull(offsets[6]);
+  object.repetition = reader.readLong(offsets[7]);
+  object.status = reader.readString(offsets[8]);
+  object.term = reader.readString(offsets[9]);
+  object.updatedAt = reader.readDateTime(offsets[10]);
   return object;
 }
 
@@ -188,20 +208,24 @@ P _cardModelDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 2:
-      return (reader.readBool(offset)) as P;
-    case 3:
-      return (reader.readStringOrNull(offset)) as P;
-    case 4:
-      return (reader.readDateTime(offset)) as P;
-    case 5:
-      return (reader.readStringOrNull(offset)) as P;
-    case 6:
       return (reader.readLong(offset)) as P;
+    case 3:
+      return (reader.readBool(offset)) as P;
+    case 4:
+      return (reader.readStringOrNull(offset)) as P;
+    case 5:
+      return (reader.readDateTime(offset)) as P;
+    case 6:
+      return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 8:
+      return (reader.readString(offset)) as P;
+    case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -241,6 +265,14 @@ extension CardModelQueryWhereSort
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         const IndexWhereClause.any(indexName: r'definition'),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhere> anyNextReview() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'nextReview'),
       );
     });
   }
@@ -694,6 +726,111 @@ extension CardModelQueryWhere
       }
     });
   }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhereClause> nextReviewEqualTo(
+    DateTime nextReview,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'nextReview', value: [nextReview]),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhereClause> nextReviewNotEqualTo(
+    DateTime nextReview,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nextReview',
+                lower: [],
+                upper: [nextReview],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nextReview',
+                lower: [nextReview],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nextReview',
+                lower: [nextReview],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'nextReview',
+                lower: [],
+                upper: [nextReview],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhereClause> nextReviewGreaterThan(
+    DateTime nextReview, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'nextReview',
+          lower: [nextReview],
+          includeLower: include,
+          upper: [],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhereClause> nextReviewLessThan(
+    DateTime nextReview, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'nextReview',
+          lower: [],
+          upper: [nextReview],
+          includeUpper: include,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterWhereClause> nextReviewBetween(
+    DateTime lowerNextReview,
+    DateTime upperNextReview, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'nextReview',
+          lower: [lowerNextReview],
+          includeLower: includeLower,
+          upper: [upperNextReview],
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
 }
 
 extension CardModelQueryFilter
@@ -845,58 +982,76 @@ extension CardModelQueryFilter
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> difficultyEqualTo(
-    int value,
-  ) {
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  easinessFactorEqualTo(double value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'difficulty', value: value),
+        FilterCondition.equalTo(
+          property: r'easinessFactor',
+          value: value,
+
+          epsilon: epsilon,
+        ),
       );
     });
   }
 
   QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
-  difficultyGreaterThan(int value, {bool include = false}) {
+  easinessFactorGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(
           include: include,
-          property: r'difficulty',
+          property: r'easinessFactor',
           value: value,
+
+          epsilon: epsilon,
         ),
       );
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> difficultyLessThan(
-    int value, {
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  easinessFactorLessThan(
+    double value, {
     bool include = false,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.lessThan(
           include: include,
-          property: r'difficulty',
+          property: r'easinessFactor',
           value: value,
+
+          epsilon: epsilon,
         ),
       );
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> difficultyBetween(
-    int lower,
-    int upper, {
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  easinessFactorBetween(
+    double lower,
+    double upper, {
     bool includeLower = true,
     bool includeUpper = true,
+    double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.between(
-          property: r'difficulty',
+          property: r'easinessFactor',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
           includeUpper: includeUpper,
+
+          epsilon: epsilon,
         ),
       );
     });
@@ -952,6 +1107,65 @@ extension CardModelQueryFilter
       return query.addFilterCondition(
         FilterCondition.between(
           property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> intervalEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'interval', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> intervalGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'interval',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> intervalLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'interval',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> intervalBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'interval',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
@@ -1356,30 +1570,30 @@ extension CardModelQueryFilter
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> stabilityEqualTo(
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> repetitionEqualTo(
     int value,
   ) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'stability', value: value),
+        FilterCondition.equalTo(property: r'repetition', value: value),
       );
     });
   }
 
   QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
-  stabilityGreaterThan(int value, {bool include = false}) {
+  repetitionGreaterThan(int value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.greaterThan(
           include: include,
-          property: r'stability',
+          property: r'repetition',
           value: value,
         ),
       );
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> stabilityLessThan(
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> repetitionLessThan(
     int value, {
     bool include = false,
   }) {
@@ -1387,14 +1601,14 @@ extension CardModelQueryFilter
       return query.addFilterCondition(
         FilterCondition.lessThan(
           include: include,
-          property: r'stability',
+          property: r'repetition',
           value: value,
         ),
       );
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> stabilityBetween(
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> repetitionBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -1403,12 +1617,158 @@ extension CardModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.between(
-          property: r'stability',
+          property: r'repetition',
           lower: lower,
           includeLower: includeLower,
           upper: upper,
           includeUpper: includeUpper,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'status',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusContains(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'status',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'status', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> statusIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'status', value: ''),
       );
     });
   }
@@ -1650,15 +2010,27 @@ extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByDifficulty() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByEasinessFactor() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'difficulty', Sort.asc);
+      return query.addSortBy(r'easinessFactor', Sort.asc);
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByDifficultyDesc() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByEasinessFactorDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'difficulty', Sort.desc);
+      return query.addSortBy(r'easinessFactor', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByInterval() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'interval', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByIntervalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'interval', Sort.desc);
     });
   }
 
@@ -1710,15 +2082,27 @@ extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByStability() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByRepetition() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stability', Sort.asc);
+      return query.addSortBy(r'repetition', Sort.asc);
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByStabilityDesc() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByRepetitionDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stability', Sort.desc);
+      return query.addSortBy(r'repetition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.desc);
     });
   }
 
@@ -1761,15 +2145,15 @@ extension CardModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByDifficulty() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByEasinessFactor() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'difficulty', Sort.asc);
+      return query.addSortBy(r'easinessFactor', Sort.asc);
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByDifficultyDesc() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByEasinessFactorDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'difficulty', Sort.desc);
+      return query.addSortBy(r'easinessFactor', Sort.desc);
     });
   }
 
@@ -1782,6 +2166,18 @@ extension CardModelQuerySortThenBy
   QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByInterval() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'interval', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByIntervalDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'interval', Sort.desc);
     });
   }
 
@@ -1833,15 +2229,27 @@ extension CardModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByStability() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByRepetition() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stability', Sort.asc);
+      return query.addSortBy(r'repetition', Sort.asc);
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByStabilityDesc() {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByRepetitionDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'stability', Sort.desc);
+      return query.addSortBy(r'repetition', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByStatus() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByStatusDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'status', Sort.desc);
     });
   }
 
@@ -1880,9 +2288,15 @@ extension CardModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QDistinct> distinctByDifficulty() {
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByEasinessFactor() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'difficulty');
+      return query.addDistinctBy(r'easinessFactor');
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByInterval() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'interval');
     });
   }
 
@@ -1914,9 +2328,17 @@ extension CardModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<CardModel, CardModel, QDistinct> distinctByStability() {
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByRepetition() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'stability');
+      return query.addDistinctBy(r'repetition');
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByStatus({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'status', caseSensitive: caseSensitive);
     });
   }
 
@@ -1949,9 +2371,15 @@ extension CardModelQueryProperty
     });
   }
 
-  QueryBuilder<CardModel, int, QQueryOperations> difficultyProperty() {
+  QueryBuilder<CardModel, double, QQueryOperations> easinessFactorProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'difficulty');
+      return query.addPropertyName(r'easinessFactor');
+    });
+  }
+
+  QueryBuilder<CardModel, int, QQueryOperations> intervalProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'interval');
     });
   }
 
@@ -1979,9 +2407,15 @@ extension CardModelQueryProperty
     });
   }
 
-  QueryBuilder<CardModel, int, QQueryOperations> stabilityProperty() {
+  QueryBuilder<CardModel, int, QQueryOperations> repetitionProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'stability');
+      return query.addPropertyName(r'repetition');
+    });
+  }
+
+  QueryBuilder<CardModel, String, QQueryOperations> statusProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'status');
     });
   }
 

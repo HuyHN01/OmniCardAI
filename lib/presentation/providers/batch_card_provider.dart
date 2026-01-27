@@ -15,13 +15,20 @@ class BatchCardNotifier extends _$BatchCardNotifier {
     required int deckId,
     required List<CardFormModel> forms,
   }) async {
-    // 1. Chuyển đổi dữ liệu (Mapping)
+    // 1. Chuyển đổi dữ liệu (Mapping) chuẩn SM-2
     final newCards = forms.map((f) => CardModel()
       ..term = f.frontController.text.trim()
       ..definition = f.backController.text.trim()
-      ..stability = 0
-      ..difficulty = 0
-      ..isDirty = true
+      
+      // --- THIẾT LẬP THÔNG SỐ KHỞI TẠO CHO SM-2 ---
+      ..repetition = 0         // Chưa lặp lại lần nào
+      ..interval = 0           // Khoảng cách ôn tập là 0 ngày
+      ..easinessFactor = 2.5   // Giá trị mặc định chuẩn của thuật toán SM-2
+      ..nextReview = DateTime.now() // Đặt lịch học ngay lập tức (Due Now)
+      
+      // --- METADATA ---
+      ..status = 'new'         // Trạng thái hiển thị là Mới
+      ..isDirty = true         // Đánh dấu để sync Firebase
       ..updatedAt = DateTime.now()
     ).toList();
 

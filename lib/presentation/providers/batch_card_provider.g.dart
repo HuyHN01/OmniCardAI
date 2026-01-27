@@ -6,7 +6,7 @@ part of 'batch_card_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$batchCardNotifierHash() => r'c60ad73adb3a798be100a80f0d9e6538a4eb9546';
+String _$batchCardNotifierHash() => r'd88165e06db82d86417d43bed5e50411d0909d14';
 
 /// See also [BatchCardNotifier].
 @ProviderFor(BatchCardNotifier)
