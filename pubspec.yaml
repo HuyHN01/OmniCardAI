@@ -30,6 +30,7 @@ dependencies:
   # Bạn đang dùng bộ 3.2.1 thì giữ nguyên bộ này cho đồng bộ
   isar_community: ^3.2.1
   isar_community_flutter_libs: ^3.2.1
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

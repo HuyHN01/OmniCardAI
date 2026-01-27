@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/route_name.dart';
+import 'package:omni_card_ai/core/services/groq_service.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 
 /// ============ AI TEXT INPUT SCREEN ============
@@ -53,31 +56,21 @@ class _AIFlashcardGenerationScreenState extends State<AIFlashcardGenerationScree
     try {
       final inputText = _textController.text.trim();
 
-      // TODO: Call Gemini AI API
-      // Example:
-      // final cards = await geminiService.generateCards(
-      //   text: inputText,
-      //   deckId: widget.deckId,
-      // );
-
-      // Simulate AI processing
-      await Future.delayed(const Duration(seconds: 3));
+      final groqService = GroqService();
+      final cards = await groqService.generateFlashcards(inputText);
 
       if (!mounted) return;
 
-      // Mock response
-      final mockCards = [
-        {'front': 'Câu hỏi 1 từ AI', 'back': 'Câu trả lời 1'},
-        {'front': 'Câu hỏi 2 từ AI', 'back': 'Câu trả lời 2'},
-        {'front': 'Câu hỏi 3 từ AI', 'back': 'Câu trả lời 3'},
-      ];
-
-      // Show success and navigate back with results
-      Navigator.pop(context, mockCards);
+      // Show success and navigate to review screen
+      context.pushNamed(
+        RouteName.aiGenerationReview,
+        pathParameters: {'deckId': widget.deckId.toString()},
+        extra: cards,
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('✨ Đã tạo ${mockCards.length} thẻ từ văn bản'),
+          content: Text('✨ Đã tạo ${cards.length} thẻ từ văn bản'),
           backgroundColor: AppTheme.accentGreen,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(

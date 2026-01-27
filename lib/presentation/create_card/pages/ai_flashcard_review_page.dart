@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/data/models/card_model.dart';
+import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
+import 'package:omni_card_ai/core/theme/app_theme.dart';
 
 /// ============ GENERATED CARD MODEL ============
 class GeneratedCardModel {
@@ -15,37 +20,32 @@ class GeneratedCardModel {
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   Map<String, String> toMap() {
-    return {
-      'question': question,
-      'answer': answer,
-    };
+    return {'question': question, 'answer': answer};
   }
 }
 
 /// ============ REVIEW GENERATED CARDS SCREEN ============
 /// Màn hình duyệt và chỉnh sửa thẻ do AI tạo ra
-class AIFlashcardReviewScreen extends StatefulWidget {
+class AIFlashcardReviewScreen extends ConsumerStatefulWidget {
   final List<Map<String, String>> generatedCards;
-  final String? initialDeckId;
+  final int initialDeckId;
   final String? initialDeckName;
 
   const AIFlashcardReviewScreen({
     super.key,
     required this.generatedCards,
-    this.initialDeckId,
+    required this.initialDeckId,
     this.initialDeckName,
   });
 
   @override
-  State<AIFlashcardReviewScreen> createState() =>
+  ConsumerState<AIFlashcardReviewScreen> createState() =>
       _AIFlashcardReviewScreenState();
 }
 
 class _AIFlashcardReviewScreenState
-    extends State<AIFlashcardReviewScreen> {
+    extends ConsumerState<AIFlashcardReviewScreen> {
   late List<GeneratedCardModel> _cards;
-  String? _selectedDeckId;
-  String _selectedDeckName = 'Bộ thẻ Tiếng Anh';
   bool _isSaving = false;
 
   @override
@@ -53,14 +53,13 @@ class _AIFlashcardReviewScreenState
     super.initState();
     // Convert to model
     _cards = widget.generatedCards
-        .map((card) => GeneratedCardModel(
-              question: card['front'] ?? card['question'] ?? '',
-              answer: card['back'] ?? card['answer'] ?? '',
-            ))
+        .map(
+          (card) => GeneratedCardModel(
+            question: card['front'] ?? card['question'] ?? card['term'] ?? '',
+            answer: card['back'] ?? card['answer'] ?? card['definition'] ?? '',
+          ),
+        )
         .toList();
-
-    _selectedDeckId = widget.initialDeckId;
-    _selectedDeckName = widget.initialDeckName ?? 'Bộ thẻ Tiếng Anh';
   }
 
   // ========== COMPUTED VALUES ==========
@@ -89,10 +88,8 @@ class _AIFlashcardReviewScreenState
     final card = _cards[index];
     final result = await showDialog<Map<String, String>>(
       context: context,
-      builder: (context) => EditCardDialog(
-        question: card.question,
-        answer: card.answer,
-      ),
+      builder: (context) =>
+          EditCardDialog(question: card.question, answer: card.answer),
     );
 
     if (result != null) {
@@ -103,24 +100,24 @@ class _AIFlashcardReviewScreenState
     }
   }
 
-  void _showDeckSelector() {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => DeckSelectorSheet(
-        currentDeckId: _selectedDeckId,
-        onDeckSelected: (deckId, deckName) {
-          setState(() {
-            _selectedDeckId = deckId;
-            _selectedDeckName = deckName;
-          });
-          Navigator.pop(context);
-        },
-      ),
-    );
-  }
+  // void _showDeckSelector() {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+  //     ),
+  //     builder: (context) => DeckSelectorSheet(
+  //       currentDeckId: _selectedDeckId,
+  //       onDeckSelected: (deckId, deckName) {
+  //         setState(() {
+  //           _selectedDeckId = deckId;
+  //           _selectedDeckName = deckName;
+  //         });
+  //         Navigator.pop(context);
+  //       },
+  //     ),
+  //   );
+  // }
 
   Future<void> _onSaveCards() async {
     if (!_hasSelection) {
@@ -141,25 +138,37 @@ class _AIFlashcardReviewScreenState
     setState(() => _isSaving = true);
 
     try {
-      final selectedCards = _cards
+      final int targetDeckId = widget.initialDeckId;
+
+      final newCards = _cards
           .where((card) => card.isSelected)
-          .map((card) => card.toMap())
+          .map(
+            (card) => CardModel()
+              ..term = card.question
+              ..definition = card.answer
+              ..repetition = 0
+              ..interval = 0
+              ..easinessFactor = 2.5
+              ..nextReview = DateTime.now()
+              ..status = 'new'
+              ..isDirty = true
+              ..updatedAt = DateTime.now(),
+          )
           .toList();
 
-      // TODO: Save to database/provider
-      // await ref.read(cardsProvider.notifier).addCards(
-      //   deckId: _selectedDeckId,
-      //   cards: selectedCards,
-      // );
+      await ref
+          .read(deckRepositoryProvider)
+          .addCardsToDeck(targetDeckId, newCards);
 
-      // Simulate API call
       await Future.delayed(const Duration(seconds: 1));
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('✅ Đã lưu $_selectedCount thẻ vào "$_selectedDeckName"'),
+          content: Text(
+            '✅ Đã lưu $_selectedCount thẻ vào ${widget.initialDeckName ?? 'bộ thẻ hiện tại'}'
+          ),
           backgroundColor: AppTheme.accentGreen,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
@@ -169,8 +178,8 @@ class _AIFlashcardReviewScreenState
         ),
       );
 
-      // Return to previous screen
-      Navigator.pop(context, selectedCards);
+      context.pop();
+      context.pop();
     } catch (e) {
       if (!mounted) return;
 
@@ -231,10 +240,7 @@ class _AIFlashcardReviewScreenState
             onPressed: _toggleSelectAll,
             child: Text(
               _allSelected ? 'Bỏ chọn tất cả' : 'Chọn tất cả',
-              style: const TextStyle(
-                fontSize: 13,
-                color: AppTheme.primaryBlue,
-              ),
+              style: const TextStyle(fontSize: 13, color: AppTheme.primaryBlue),
             ),
           ),
         ],
@@ -276,43 +282,34 @@ class _AIFlashcardReviewScreenState
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Deck Selector
-                    InkWell(
-                      onTap: _showDeckSelector,
-                      borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 14,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.circular(AppTheme.radiusM),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.folder,
-                              size: 20,
-                              color: AppTheme.textSecondary,
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Text(
-                                'Lưu vào: $_selectedDeckName',
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  color: AppTheme.textPrimary,
-                                ),
+                    // Deck Info Display (Static for now based on passed args)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 14,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(AppTheme.radiusM),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.folder,
+                            size: 20,
+                            color: AppTheme.textSecondary,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              'Lưu vào: ${widget.initialDeckName ?? "Bộ thẻ hiện tại"}',
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: AppTheme.textPrimary,
                               ),
                             ),
-                            const Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 20,
-                              color: AppTheme.textSecondary,
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
 
@@ -322,8 +319,9 @@ class _AIFlashcardReviewScreenState
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed:
-                            (_hasSelection && !_isSaving) ? _onSaveCards : null,
+                        onPressed: (_hasSelection && !_isSaving)
+                            ? _onSaveCards
+                            : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.primaryBlue,
                           foregroundColor: Colors.white,
@@ -333,8 +331,8 @@ class _AIFlashcardReviewScreenState
                           ),
                           elevation: 4,
                           shadowColor: AppTheme.primaryBlue.withOpacity(0.4),
-                          disabledBackgroundColor:
-                              AppTheme.primaryBlue.withOpacity(0.3),
+                          disabledBackgroundColor: AppTheme.primaryBlue
+                              .withOpacity(0.3),
                         ),
                         child: _isSaving
                             ? const SizedBox(
@@ -497,11 +495,7 @@ class GeneratedCardItem extends StatelessWidget {
                 // Edit Button
                 IconButton(
                   onPressed: onEdit,
-                  icon: Icon(
-                    Icons.edit,
-                    size: 20,
-                    color: Colors.grey[600],
-                  ),
+                  icon: Icon(Icons.edit, size: 20, color: Colors.grey[600]),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                 ),
@@ -559,7 +553,10 @@ class _EditCardDialogState extends State<EditCardDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Câu hỏi', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Câu hỏi',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _questionController,
@@ -572,7 +569,10 @@ class _EditCardDialogState extends State<EditCardDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            const Text('Câu trả lời', style: TextStyle(fontWeight: FontWeight.w600)),
+            const Text(
+              'Câu trả lời',
+              style: TextStyle(fontWeight: FontWeight.w600),
+            ),
             const SizedBox(height: 8),
             TextField(
               controller: _answerController,
@@ -636,29 +636,18 @@ class DeckSelectorSheet extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const Divider(height: 24),
-          ...decks.map((deck) => ListTile(
-                leading: const Icon(Icons.folder, color: AppTheme.primaryBlue),
-                title: Text(deck['name']!),
-                trailing: currentDeckId == deck['id']
-                    ? const Icon(Icons.check, color: AppTheme.primaryBlue)
-                    : null,
-                onTap: () => onDeckSelected(deck['id']!, deck['name']!),
-              )),
+          ...decks.map(
+            (deck) => ListTile(
+              leading: const Icon(Icons.folder, color: AppTheme.primaryBlue),
+              title: Text(deck['name']!),
+              trailing: currentDeckId == deck['id']
+                  ? const Icon(Icons.check, color: AppTheme.primaryBlue)
+                  : null,
+              onTap: () => onDeckSelected(deck['id']!, deck['name']!),
+            ),
+          ),
         ],
       ),
     );
   }
-}
-
-// ========== APP THEME (Inline) ==========
-class AppTheme {
-  static const Color primaryBlue = Color(0xFF2196F3);
-  static const Color accentGreen = Color(0xFF10B981);
-  static const Color textPrimary = Color(0xFF111827);
-  static const Color textSecondary = Color(0xFF6B7280);
-  
-  static const double spacingM = 16.0;
-  static const double spacingL = 24.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
 }
