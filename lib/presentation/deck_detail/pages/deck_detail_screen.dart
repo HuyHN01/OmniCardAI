@@ -7,6 +7,7 @@ import 'package:omni_card_ai/presentation/deck_detail/widgets/deck_detail_widget
 import 'package:omni_card_ai/presentation/deck_detail/pages/create_card_modal.dart';
 import 'package:omni_card_ai/presentation/main_shell/floating_action_button_switcher.dart';
 import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
+import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
 
 /// ============ DECK DETAIL SCREEN ============
@@ -161,7 +162,7 @@ class DeckDetailScreen extends ConsumerWidget {
                               iconBackgroundColor: Colors.blue.shade50,
                               statusColor: _getStatusColor(card.status),
                               onTap: () {}, //Triển khai sau
-                              onEdit: () {}, //Triển khai sau
+                              onEdit: () => _showEditCardDialog(context, ref, card),
                             );
                           },
                         ),
@@ -198,5 +199,91 @@ class DeckDetailScreen extends ConsumerWidget {
       default:
         return Colors.grey;
     }
+  }
+
+  void _showEditCardDialog(BuildContext context, WidgetRef ref, CardModel card) {
+    final termCtrl = TextEditingController(text: card.term);
+    final defCtrl = TextEditingController(text: card.definition);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Chỉnh sửa thẻ'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: termCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Mặt trước (Câu hỏi)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 2,
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: defCtrl,
+              decoration: const InputDecoration(
+                labelText: 'Mặt sau (Câu trả lời)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          // NÚT XÓA
+          TextButton.icon(
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (ctx) => AlertDialog(
+                  title: const Text('Xóa thẻ này?'),
+                  content: const Text('Hành động này không thể hoàn tác.'),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Hủy')),
+                    TextButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Xóa', style: TextStyle(color: Colors.red))),
+                  ],
+                ),
+              );
+
+              if (confirm == true && context.mounted) {
+                // Gọi Repository để xóa
+                await ref.read(deckRepositoryProvider).deleteCard(card.id);
+                if (context.mounted) {
+                  Navigator.pop(context); // Đóng Dialog Edit
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã xóa thẻ')));
+                }
+              }
+            },
+            icon: const Icon(Icons.delete_outline, color: Colors.red),
+            label: const Text('Xóa', style: TextStyle(color: Colors.red)),
+          ),
+          
+          // NÚT LƯU
+          ElevatedButton(
+            onPressed: () async {
+              final newTerm = termCtrl.text.trim();
+              final newDef = defCtrl.text.trim();
+
+              if (newTerm.isNotEmpty && newDef.isNotEmpty) {
+                // Cập nhật giá trị mới vào object Card
+                card.term = newTerm;
+                card.definition = newDef;
+                
+                // Gọi Repository để lưu
+                await ref.read(deckRepositoryProvider).updateCard(card);
+                
+                if (context.mounted) {
+                  Navigator.pop(context); // Đóng Dialog
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đã cập nhật thẻ')));
+                }
+              }
+            },
+            child: const Text('Lưu thay đổi'),
+          ),
+        ],
+      ),
+    );
   }
 }

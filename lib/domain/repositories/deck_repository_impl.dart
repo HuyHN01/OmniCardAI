@@ -153,4 +153,20 @@ class DeckRepositoryImpl implements IDeckRepository {
         .sortByNextReview()
         .findAll();
   }
+
+  @override
+  Future<void> updateCard(CardModel card) async {
+    await isar.writeTxn(() async {
+      card.updatedAt = DateTime.now();
+      card.isDirty = true; // Đánh dấu để sync
+      await isar.cardModels.put(card);
+    });
+  }
+
+  @override
+  Future<void> deleteCard(int cardId) async {
+    await isar.writeTxn(() async {
+      await isar.cardModels.delete(cardId);
+    });
+  }
 }
