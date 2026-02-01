@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/routes/route_name.dart';
 import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
 import 'package:omni_card_ai/presentation/providers/study_provider.dart';
+import 'package:omni_card_ai/presentation/providers/tts_provider.dart';
 import 'package:omni_card_ai/presentation/study/widgets/study_widgets.dart';
 
 
@@ -158,6 +159,12 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
                         tag: '' ,//Bổ sung field tab
                         hint: currentCard.mnemonic ,
                         showAnswer: false,
+                        onSpeak: () {
+                          ref.read(ttsServiceProvider).speak(
+                            currentCard.term,
+                            currentCard.frontLanguage,
+                          );
+                        },
                       ), 
                       back: StudyCardWidget(
                         term: currentCard.term, 
@@ -166,6 +173,12 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
                         tag: '' ,//Bổ sung field tab
                         hint: currentCard.mnemonic,
                         showAnswer: true,
+                        onSpeak: () {
+                          ref.read(ttsServiceProvider).speak(
+                            currentCard.definition,
+                            currentCard.backLanguage,
+                          );
+                        },
                       ),
                       showBack: _showAnswer,
                     ),

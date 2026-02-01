@@ -17,42 +17,57 @@ const CardModelSchema = CollectionSchema(
   name: r'CardModel',
   id: -4511307714291515206,
   properties: {
-    r'definition': PropertySchema(
+    r'backLanguage': PropertySchema(
       id: 0,
+      name: r'backLanguage',
+      type: IsarType.string,
+    ),
+    r'definition': PropertySchema(
+      id: 1,
       name: r'definition',
       type: IsarType.string,
     ),
     r'easinessFactor': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'easinessFactor',
       type: IsarType.double,
     ),
-    r'interval': PropertySchema(id: 2, name: r'interval', type: IsarType.long),
-    r'isDirty': PropertySchema(id: 3, name: r'isDirty', type: IsarType.bool),
+    r'frontLanguage': PropertySchema(
+      id: 3,
+      name: r'frontLanguage',
+      type: IsarType.string,
+    ),
+    r'interval': PropertySchema(id: 4, name: r'interval', type: IsarType.long),
+    r'isAutoPlayEnabled': PropertySchema(
+      id: 5,
+      name: r'isAutoPlayEnabled',
+      type: IsarType.bool,
+    ),
+    r'isDirty': PropertySchema(id: 6, name: r'isDirty', type: IsarType.bool),
     r'mnemonic': PropertySchema(
-      id: 4,
+      id: 7,
       name: r'mnemonic',
       type: IsarType.string,
     ),
     r'nextReview': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'nextReview',
       type: IsarType.dateTime,
     ),
     r'remoteId': PropertySchema(
-      id: 6,
+      id: 9,
       name: r'remoteId',
       type: IsarType.string,
     ),
     r'repetition': PropertySchema(
-      id: 7,
+      id: 10,
       name: r'repetition',
       type: IsarType.long,
     ),
-    r'status': PropertySchema(id: 8, name: r'status', type: IsarType.string),
-    r'term': PropertySchema(id: 9, name: r'term', type: IsarType.string),
+    r'status': PropertySchema(id: 11, name: r'status', type: IsarType.string),
+    r'term': PropertySchema(id: 12, name: r'term', type: IsarType.string),
     r'updatedAt': PropertySchema(
-      id: 10,
+      id: 13,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -139,7 +154,9 @@ int _cardModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.backLanguage.length * 3;
   bytesCount += 3 + object.definition.length * 3;
+  bytesCount += 3 + object.frontLanguage.length * 3;
   {
     final value = object.mnemonic;
     if (value != null) {
@@ -163,17 +180,20 @@ void _cardModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.definition);
-  writer.writeDouble(offsets[1], object.easinessFactor);
-  writer.writeLong(offsets[2], object.interval);
-  writer.writeBool(offsets[3], object.isDirty);
-  writer.writeString(offsets[4], object.mnemonic);
-  writer.writeDateTime(offsets[5], object.nextReview);
-  writer.writeString(offsets[6], object.remoteId);
-  writer.writeLong(offsets[7], object.repetition);
-  writer.writeString(offsets[8], object.status);
-  writer.writeString(offsets[9], object.term);
-  writer.writeDateTime(offsets[10], object.updatedAt);
+  writer.writeString(offsets[0], object.backLanguage);
+  writer.writeString(offsets[1], object.definition);
+  writer.writeDouble(offsets[2], object.easinessFactor);
+  writer.writeString(offsets[3], object.frontLanguage);
+  writer.writeLong(offsets[4], object.interval);
+  writer.writeBool(offsets[5], object.isAutoPlayEnabled);
+  writer.writeBool(offsets[6], object.isDirty);
+  writer.writeString(offsets[7], object.mnemonic);
+  writer.writeDateTime(offsets[8], object.nextReview);
+  writer.writeString(offsets[9], object.remoteId);
+  writer.writeLong(offsets[10], object.repetition);
+  writer.writeString(offsets[11], object.status);
+  writer.writeString(offsets[12], object.term);
+  writer.writeDateTime(offsets[13], object.updatedAt);
 }
 
 CardModel _cardModelDeserialize(
@@ -183,18 +203,21 @@ CardModel _cardModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = CardModel();
-  object.definition = reader.readString(offsets[0]);
-  object.easinessFactor = reader.readDouble(offsets[1]);
+  object.backLanguage = reader.readString(offsets[0]);
+  object.definition = reader.readString(offsets[1]);
+  object.easinessFactor = reader.readDouble(offsets[2]);
+  object.frontLanguage = reader.readString(offsets[3]);
   object.id = id;
-  object.interval = reader.readLong(offsets[2]);
-  object.isDirty = reader.readBool(offsets[3]);
-  object.mnemonic = reader.readStringOrNull(offsets[4]);
-  object.nextReview = reader.readDateTime(offsets[5]);
-  object.remoteId = reader.readStringOrNull(offsets[6]);
-  object.repetition = reader.readLong(offsets[7]);
-  object.status = reader.readString(offsets[8]);
-  object.term = reader.readString(offsets[9]);
-  object.updatedAt = reader.readDateTime(offsets[10]);
+  object.interval = reader.readLong(offsets[4]);
+  object.isAutoPlayEnabled = reader.readBool(offsets[5]);
+  object.isDirty = reader.readBool(offsets[6]);
+  object.mnemonic = reader.readStringOrNull(offsets[7]);
+  object.nextReview = reader.readDateTime(offsets[8]);
+  object.remoteId = reader.readStringOrNull(offsets[9]);
+  object.repetition = reader.readLong(offsets[10]);
+  object.status = reader.readString(offsets[11]);
+  object.term = reader.readString(offsets[12]);
+  object.updatedAt = reader.readDateTime(offsets[13]);
   return object;
 }
 
@@ -208,24 +231,30 @@ P _cardModelDeserializeProp<P>(
     case 0:
       return (reader.readString(offset)) as P;
     case 1:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 2:
-      return (reader.readLong(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readStringOrNull(offset)) as P;
-    case 5:
-      return (reader.readDateTime(offset)) as P;
-    case 6:
-      return (reader.readStringOrNull(offset)) as P;
-    case 7:
       return (reader.readLong(offset)) as P;
+    case 5:
+      return (reader.readBool(offset)) as P;
+    case 6:
+      return (reader.readBool(offset)) as P;
+    case 7:
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
+      return (reader.readLong(offset)) as P;
+    case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -835,6 +864,150 @@ extension CardModelQueryWhere
 
 extension CardModelQueryFilter
     on QueryBuilder<CardModel, CardModel, QFilterCondition> {
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> backLanguageEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> backLanguageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'backLanguage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'backLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition> backLanguageMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'backLanguage',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'backLanguage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  backLanguageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'backLanguage', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterFilterCondition> definitionEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -1057,6 +1230,147 @@ extension CardModelQueryFilter
     });
   }
 
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'frontLanguage',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'frontLanguage',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'frontLanguage',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'frontLanguage', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  frontLanguageIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'frontLanguage', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterFilterCondition> idEqualTo(
     Id value,
   ) {
@@ -1171,6 +1485,15 @@ extension CardModelQueryFilter
           upper: upper,
           includeUpper: includeUpper,
         ),
+      );
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterFilterCondition>
+  isAutoPlayEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isAutoPlayEnabled', value: value),
       );
     });
   }
@@ -1998,6 +2321,18 @@ extension CardModelQueryLinks
 }
 
 extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByBackLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByBackLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByDefinition() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'definition', Sort.asc);
@@ -2022,6 +2357,18 @@ extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
     });
   }
 
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByFrontLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frontLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByFrontLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frontLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByInterval() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'interval', Sort.asc);
@@ -2031,6 +2378,19 @@ extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
   QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByIntervalDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'interval', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> sortByIsAutoPlayEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoPlayEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy>
+  sortByIsAutoPlayEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoPlayEnabled', Sort.desc);
     });
   }
 
@@ -2133,6 +2493,18 @@ extension CardModelQuerySortBy on QueryBuilder<CardModel, CardModel, QSortBy> {
 
 extension CardModelQuerySortThenBy
     on QueryBuilder<CardModel, CardModel, QSortThenBy> {
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByBackLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByBackLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'backLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByDefinition() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'definition', Sort.asc);
@@ -2157,6 +2529,18 @@ extension CardModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByFrontLanguage() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frontLanguage', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByFrontLanguageDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'frontLanguage', Sort.desc);
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QAfterSortBy> thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
@@ -2178,6 +2562,19 @@ extension CardModelQuerySortThenBy
   QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByIntervalDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'interval', Sort.desc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy> thenByIsAutoPlayEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoPlayEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QAfterSortBy>
+  thenByIsAutoPlayEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isAutoPlayEnabled', Sort.desc);
     });
   }
 
@@ -2280,6 +2677,14 @@ extension CardModelQuerySortThenBy
 
 extension CardModelQueryWhereDistinct
     on QueryBuilder<CardModel, CardModel, QDistinct> {
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByBackLanguage({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'backLanguage', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QDistinct> distinctByDefinition({
     bool caseSensitive = true,
   }) {
@@ -2294,9 +2699,26 @@ extension CardModelQueryWhereDistinct
     });
   }
 
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByFrontLanguage({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'frontLanguage',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
   QueryBuilder<CardModel, CardModel, QDistinct> distinctByInterval() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'interval');
+    });
+  }
+
+  QueryBuilder<CardModel, CardModel, QDistinct> distinctByIsAutoPlayEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isAutoPlayEnabled');
     });
   }
 
@@ -2365,6 +2787,12 @@ extension CardModelQueryProperty
     });
   }
 
+  QueryBuilder<CardModel, String, QQueryOperations> backLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'backLanguage');
+    });
+  }
+
   QueryBuilder<CardModel, String, QQueryOperations> definitionProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'definition');
@@ -2377,9 +2805,21 @@ extension CardModelQueryProperty
     });
   }
 
+  QueryBuilder<CardModel, String, QQueryOperations> frontLanguageProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'frontLanguage');
+    });
+  }
+
   QueryBuilder<CardModel, int, QQueryOperations> intervalProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'interval');
+    });
+  }
+
+  QueryBuilder<CardModel, bool, QQueryOperations> isAutoPlayEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isAutoPlayEnabled');
     });
   }
 
