@@ -17,7 +17,7 @@ dependencies:
 
   # --- Utilities ---
   flutter_dotenv: ^6.0.0
-  path_provider: ^2.1.2 
+  path_provider: ^2.1.5 
 
   # --- Firebase ---
   firebase_core: ^4.3.0
@@ -32,6 +32,8 @@ dependencies:
   isar_community_flutter_libs: ^3.2.1
   http: ^1.6.0
   flutter_tts: ^4.2.5
+  audioplayers: ^6.5.1
+  crypto: ^3.0.7
 
 dev_dependencies:
   flutter_test:

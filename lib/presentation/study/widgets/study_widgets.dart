@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
-import 'package:omni_card_ai/core/theme/app_theme.dart';
-
 /// ============ RATING BUTTON ============
 /// Button cho các mức độ đánh giá (Quên/Khó/Được/Dễ)
 class RatingButton extends StatelessWidget {
