@@ -6,6 +6,7 @@ class AppRoutes {
 
   static const String deckDetail = '/deck-detail/:deckId';
   static const String study = 'study';
+  static const String completeStudy = 'complete-study';
   static const String manualCreateCard = 'manual-create-card';
   static const String aiGenerationCreateCard = 'ai-generation-createc-card';
   static const String aiGenerationReview = 'review-card';

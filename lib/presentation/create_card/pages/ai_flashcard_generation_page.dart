@@ -321,7 +321,7 @@ class _AIFlashcardGenerationScreenState extends State<AIFlashcardGenerationScree
                               Icon(Icons.auto_awesome, size: 20),
                               SizedBox(width: 10),
                               Text(
-                                'Tạo thẻ với Gemini',
+                                'Tạo thẻ với AI',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,

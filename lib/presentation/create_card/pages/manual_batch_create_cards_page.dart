@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/presentation/create_card/widgets/manual_flashcard_input_widget.dart';
 import 'package:omni_card_ai/presentation/create_card/widgets/card_form_model.dart';

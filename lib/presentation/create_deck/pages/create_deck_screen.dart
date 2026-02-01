@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:omni_card_ai/core/routes/app_route.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/presentation/providers/deck_provider.dart';

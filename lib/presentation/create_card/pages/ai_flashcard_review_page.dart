@@ -10,12 +10,16 @@ class GeneratedCardModel {
   final String id;
   String question;
   String answer;
+  String frontLanguage;
+  String backLanguage;
   bool isSelected;
 
   GeneratedCardModel({
     String? id,
     required this.question,
     required this.answer,
+    this.frontLanguage = 'vi-VN',
+    this.backLanguage = 'vi-VN',
     this.isSelected = true, // Selected by default
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
@@ -57,6 +61,8 @@ class _AIFlashcardReviewScreenState
           (card) => GeneratedCardModel(
             question: card['front'] ?? card['question'] ?? card['term'] ?? '',
             answer: card['back'] ?? card['answer'] ?? card['definition'] ?? '',
+            frontLanguage: card['frontLanguage'] ?? 'vi-VN',
+            backLanguage: card['backLanguage'] ?? 'vi-VN',
           ),
         )
         .toList();
@@ -146,6 +152,8 @@ class _AIFlashcardReviewScreenState
             (card) => CardModel()
               ..term = card.question
               ..definition = card.answer
+              ..frontLanguage = card.frontLanguage
+              ..backLanguage = card.backLanguage
               ..repetition = 0
               ..interval = 0
               ..easinessFactor = 2.5

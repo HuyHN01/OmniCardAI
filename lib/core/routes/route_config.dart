@@ -12,6 +12,7 @@ import 'package:omni_card_ai/presentation/home/pages/home_page.dart';
 import 'package:omni_card_ai/presentation/main_shell/main_shell_page.dart';
 import 'package:omni_card_ai/presentation/profile/pages/profile_page.dart';
 import 'package:omni_card_ai/presentation/stats/pages/stats_screen.dart';
+import 'package:omni_card_ai/presentation/study/pages/completion_page.dart';
 import 'package:omni_card_ai/presentation/study/pages/study_screen.dart';
 
 
@@ -81,7 +82,18 @@ final GoRouter goRouter = GoRouter(
             final deckId = int.parse(deckIdString);
 
             return StudyScreen(deckId: deckId);
-          }
+          },
+          routes: [
+            GoRoute(
+              path: AppRoutes.completeStudy,
+              name: RouteName.completeStudy,
+              builder: (context, state) {
+                final deckIdString = state.pathParameters['deckId']!;
+                final deckId = int.parse(deckIdString);
+                return CompletionPage(deckId: deckId);
+              },
+            )
+          ]
         ),
       ]
     ),

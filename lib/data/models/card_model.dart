@@ -17,6 +17,11 @@ class CardModel {
 
   String? mnemonic;
 
+   // ========== PHỤC VỤ TÍNH NĂNG TEXT-TO-SPEECH ==========
+  String frontLanguage = 'vi-VN'; // Mặc định là tiếng Việt
+  String backLanguage = 'vi-VN'; // Mặc định là tiếng Việt
+  bool isAutoPlayEnabled = false;
+
   // ========== SM-2 FIELDS ==========
   int repetition = 0;
   double easinessFactor = 2.5;
