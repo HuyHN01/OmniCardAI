@@ -1,9 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:omni_card_ai/core/services/groq_service.dart';
 import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
-// State chứa danh sách thẻ tạm thời
+// Dòng này cần thiết để riverpod_generator hoạt động
+part 'ai_flashcard_provider.g.dart';
+
+// --- STATE CLASS (Giữ nguyên logic cũ) ---
 class AiFlashcardState {
   final bool isLoading;
   final List<Map<String, String>> generatedCards;
@@ -28,12 +31,19 @@ class AiFlashcardState {
   }
 }
 
-// Notifier quản lý logic
-class AiFlashcardNotifier extends StateNotifier<AiFlashcardState> {
-  final GroqService _service = GroqService();
-  final Ref ref;
+// --- NOTIFIER (Chuyển sang @riverpod) ---
+// Thay vì class AiFlashcardNotifier extends StateNotifier...
+// Ta dùng annotation @riverpod để tự động sinh ra provider 'aiFlashcardProvider'
 
-  AiFlashcardNotifier(this.ref) : super(AiFlashcardState());
+@riverpod
+class AiFlashcard extends _$AiFlashcard {
+  final GroqService _service = GroqService();
+
+  // Hàm build() thay thế cho constructor và super(initialState)
+  @override
+  AiFlashcardState build() {
+    return AiFlashcardState(); // Khởi tạo state ban đầu
+  }
 
   // 1. Gọi API để tạo thẻ
   Future<bool> generateCards(String text) async {
@@ -68,6 +78,7 @@ class AiFlashcardNotifier extends StateNotifier<AiFlashcardState> {
       ).toList();
 
       // Gọi Repository lưu
+      // Lưu ý: Trong @riverpod Class, 'ref' có sẵn, không cần truyền vào constructor
       await ref.read(deckRepositoryProvider).addCardsToDeck(deckId, newCards);
       
       // Reset state sau khi lưu xong
@@ -85,8 +96,3 @@ class AiFlashcardNotifier extends StateNotifier<AiFlashcardState> {
     state = state.copyWith(generatedCards: updatedList);
   }
 }
-
-// Provider
-final aiFlashcardProvider = StateNotifierProvider<AiFlashcardNotifier, AiFlashcardState>((ref) {
-  return AiFlashcardNotifier(ref);
-});

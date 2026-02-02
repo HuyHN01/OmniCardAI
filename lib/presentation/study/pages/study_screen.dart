@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/routes/route_name.dart';
 import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
-import 'package:omni_card_ai/presentation/providers/study_provider.dart';
+import 'package:omni_card_ai/presentation/providers/study_session_provider.dart';
 import 'package:omni_card_ai/presentation/providers/tts_provider.dart';
 import 'package:omni_card_ai/presentation/study/widgets/study_widgets.dart';
 
@@ -259,7 +259,7 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
     );
   }
 
-  Future<void> _handleRating(StudyNotifier notifier, int rating) async {
+  Future<void> _handleRating(StudySession notifier, int rating) async {
     try {
       // Show loading nếu cần thiết (optional)
       
@@ -280,26 +280,27 @@ class _StudyScreenState extends ConsumerState<StudyScreen> {
     }
   }
 
-  void _showCompletionDialog(int numberOfCardsDone) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('🎉 Hoàn thành!'),
-        content: Text('Bạn đã học xong $numberOfCardsDone thẻ.'),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Close study screen
-            },
-            child: const Text('Xong'),
-          ),
-        ],
-      ),
-    );
-  }
+  //============ ĐIỀU HƯỚNG SANG MÀN HÌNH COMPLETETION THAY CHO DIALOG ============
+  // void _showCompletionDialog(int numberOfCardsDone) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) => AlertDialog(
+  //       title: const Text('🎉 Hoàn thành!'),
+  //       content: Text('Bạn đã học xong $numberOfCardsDone thẻ.'),
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  //       actions: [
+  //         TextButton(
+  //           onPressed: () {
+  //             Navigator.pop(context); // Close dialog
+  //             Navigator.pop(context); // Close study screen
+  //           },
+  //           child: const Text('Xong'),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   void _onClose() {
     showDialog(

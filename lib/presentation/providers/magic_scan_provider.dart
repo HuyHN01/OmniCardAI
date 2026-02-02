@@ -1,11 +1,15 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:omni_card_ai/core/services/groq_service.dart';
 import 'package:omni_card_ai/core/services/ocr_service.dart';
 
+// Dòng này cần thiết để riverpod_generator hoạt động
+part 'magic_scan_provider.g.dart';
+
+// --- STATE CLASS (Giữ nguyên) ---
 class MagicScanState {
   final bool isProcessing;
   final String? statusMessage;
-  final List<Map<String, String>>? successData; // Thêm biến này để chứa kết quả
+  final List<Map<String, String>>? successData;
 
   MagicScanState({
     this.isProcessing = false,
@@ -14,14 +18,19 @@ class MagicScanState {
   });
 }
 
-class MagicScanNotifier extends StateNotifier<MagicScanState> {
+// --- NOTIFIER (Chuyển sang @riverpod) ---
+@riverpod
+class MagicScan extends _$MagicScan {
   final OcrService _ocrService = OcrService();
   final GroqService _groqService = GroqService();
 
-  MagicScanNotifier() : super(MagicScanState());
+  @override
+  MagicScanState build() {
+    return MagicScanState(); // Khởi tạo state ban đầu
+  }
 
-  // XÓA tham số BuildContext context (Không cần nữa)
-  Future<void> startMagicScan(int deckId) async { 
+  // Logic giữ nguyên 100%
+  Future<void> startMagicScan(int deckId) async {
     try {
       // 1. Reset state cũ
       state = MagicScanState();
@@ -47,8 +56,8 @@ class MagicScanNotifier extends StateNotifier<MagicScanState> {
 
       // 2. Thay vì push context, ta lưu dữ liệu vào State
       state = MagicScanState(
-        isProcessing: false, 
-        successData: generatedCards, // UI sẽ lắng nghe biến này để navigation
+        isProcessing: false,
+        successData: generatedCards,
       );
 
     } catch (e) {
@@ -58,13 +67,9 @@ class MagicScanNotifier extends StateNotifier<MagicScanState> {
       );
     }
   }
-  
-  // Hàm reset sau khi navigate xong để tránh navigate lặp lại
+
+  // Hàm reset sau khi navigate xong
   void reset() {
     state = MagicScanState();
   }
 }
-
-final magicScanProvider = StateNotifierProvider<MagicScanNotifier, MagicScanState>((ref) {
-  return MagicScanNotifier();
-});
