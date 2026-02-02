@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/routes/route_name.dart';
+import 'package:omni_card_ai/presentation/providers/magic_scan_provider.dart';
 
 void showCreateCardModal(
   BuildContext context, 
@@ -15,13 +17,13 @@ void showCreateCardModal(
 }
 
 // --- Phần nội dung chính của Modal ---
-class _CreateCardModalContent extends StatelessWidget {
+class _CreateCardModalContent extends ConsumerWidget {
   final int deckId;
 
   const _CreateCardModalContent({required this.deckId});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final primaryColor = Colors.blue; 
     final backgroundColor = Colors.white;
     final surfaceColor = const Color(0xFFF8F9FA); // Màu nền xám nhạt cho các thẻ option
@@ -81,7 +83,7 @@ class _CreateCardModalContent extends StatelessWidget {
             surfaceColor: surfaceColor,
             onTap: () {
               context.pop();
-              // TODO: Navigate to Scan Screen
+              ref.read(magicScanProvider.notifier).startMagicScan(deckId);
               print("Selected: Scan Document");
             },
           ),

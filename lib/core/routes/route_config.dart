@@ -56,23 +56,20 @@ final GoRouter goRouter = GoRouter(
 
             return AIFlashcardGenerationScreen(deckId: deckId);
           },
-          routes: [
-            GoRoute(
-              path: AppRoutes.aiGenerationReview,
-              name: RouteName.aiGenerationReview,
-              builder: (context, state) {
-                final deckIdString = state.pathParameters['deckId']!;
-                final cards = state.extra as List<Map<String, String>>;
-                final deckId = int.parse(deckIdString);
+        ),
+        GoRoute(
+          path: AppRoutes.aiGenerationReview,
+          name: RouteName.aiGenerationReview,
+          builder: (context, state) {
+            final deckIdString = state.pathParameters['deckId']!;
+            final cards = state.extra as List<Map<String, String>>;
+            final deckId = int.parse(deckIdString);
 
-                return AIFlashcardReviewScreen(
-                  generatedCards: cards,
-                  initialDeckId: deckId,
-                  
-                );
-              },
-            )
-          ]
+            return AIFlashcardReviewScreen(
+              generatedCards: cards,
+              initialDeckId: deckId,
+            );
+          },
         ),
         GoRoute(
           path: AppRoutes.study,
