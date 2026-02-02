@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:omni_card_ai/presentation/providers/deck_provider.dart';
@@ -73,8 +74,6 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
   }
 
   Future<void> _onCreateDeck() async {
-    try {
-      // Dismiss keyboard
       FocusScope.of(context).unfocus();
 
       if (!_formKey.currentState!.validate()) {
@@ -84,23 +83,24 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
       setState(() {
         _isCreating = true;
       });
-
-      // TODO: Integrate with Riverpod/Provider
-      // Example:
+       try {
+     
       final deckName = _nameController.text.trim();
       final description = _descriptionController.text.trim();
-      await ref
-          .read(deckNotifierProvider.notifier)
-          .addDeck(deckName, description);
+      
+      final newDeckId = await ref.read(deckNotifierProvider.notifier).addDeck(deckName, description);
 
       // Simulate API call
       //await Future.delayed(const Duration(seconds: 1));
 
       if (!mounted) return;
 
-      setState(() {
-        _isCreating = false;
+      Navigator.pop(context, {
+        'name': _nameController.text.trim(),
+        'description': _descriptionController.text.trim(),
       });
+
+      context.push('/deck-detail/$newDeckId');
 
       // Show success and navigate back
       ScaffoldMessenger.of(context).showSnackBar(
@@ -114,10 +114,7 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
         ),
       );
 
-      Navigator.pop(context, {
-        'name': _nameController.text.trim(),
-        'description': _descriptionController.text.trim(),
-      });
+      
     } 
     catch (e) {
       print("LỖI KHI LƯU: $e");
@@ -126,6 +123,9 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
           SnackBar(content: Text("Lỗi: $e"), backgroundColor: Colors.red),
         );
       }
+    }
+    finally {
+      if (mounted) setState(() => _isCreating = false);
     }
   }
 

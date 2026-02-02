@@ -28,7 +28,7 @@ class DeckModel {
   double get calculateProgres {
     if (cards.isEmpty) return 0;
 
-    final masteredCards = cards.where((card) => card.stability > 10).length;
+    final masteredCards = cards.where((card) => card.status == 'mastered').length;
 
     return masteredCards / cards.length;
   }

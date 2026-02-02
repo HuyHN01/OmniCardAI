@@ -6,12 +6,10 @@ import 'package:omni_card_ai/data/models/card_model.dart';
 
 
 class IsarService {
-  static late Isar isar;
-
-  static Future<void> init() async {
+  static Future<Isar> init() async {
     final dir = await getApplicationDocumentsDirectory();
 
-    isar = await Isar.open(
+    return await Isar.open(
       [DeckModelSchema, CardModelSchema],
       directory: dir.path,
       inspector: true,
