@@ -8,7 +8,7 @@ import 'package:omni_card_ai/presentation/deck_detail/pages/create_card_modal.da
 import 'package:omni_card_ai/presentation/main_shell/floating_action_button_switcher.dart';
 import 'package:omni_card_ai/presentation/providers/deck_detail_provider.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
-
+import 'package:omni_card_ai/presentation/providers/magic_scan_provider.dart';
 
 /// ============ DECK DETAIL SCREEN ============
 /// Màn hình chi tiết bộ thẻ với danh sách flashcards
@@ -22,6 +22,59 @@ class DeckDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final scanState = ref.watch(magicScanProvider);
+    
+    // ---Lắng nghe sự kiện Thành Công để Điều Hướng ---
+    ref.listen<MagicScanState>(magicScanProvider, (previous, next) {
+      // Nếu có dữ liệu thành công
+      if (next.successData != null && next.successData!.isNotEmpty) {
+        
+        // Điều hướng sang Review
+        context.pushNamed(
+          RouteName.aiGenerationReview,
+          pathParameters: {'deckId': deckId.toString()},
+          extra: next.successData,
+        );
+        
+        // Reset state để tránh navigate lặp lại nếu rebuild
+        ref.read(magicScanProvider.notifier).reset();
+      }
+      
+      // Nếu có lỗi (statusMessage chứa lỗi và không đang xử lý)
+      if (!next.isProcessing && next.statusMessage != null && next.statusMessage!.startsWith('Error')) {
+         ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(next.statusMessage!), backgroundColor: Colors.red),
+         );
+      }
+    });
+
+    if (scanState.isProcessing) {
+      return Stack(
+            children: [
+                _buildMainContent(context, ref), // Tách nội dung chính ra hàm riêng
+                Container(
+                    color: Colors.black54,
+                    child: Center(
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                                const CircularProgressIndicator(color: Colors.white),
+                                const SizedBox(height: 16),
+                                Text(
+                                    scanState.statusMessage ?? 'Đang xử lý...',
+                                    style: const TextStyle(color: Colors.white, fontSize: 16, decoration: TextDecoration.none),
+                                )
+                            ],
+                        ),
+                    ),
+                )
+            ],
+        );
+    }
+    return _buildMainContent(context, ref);
+  }
+
+  Widget _buildMainContent(BuildContext context, WidgetRef ref) {
     final deckAsync = ref.watch(deckDetailProvider(deckId));
     final cardsAsync = ref.watch(deckCardsProvider(deckId));
 

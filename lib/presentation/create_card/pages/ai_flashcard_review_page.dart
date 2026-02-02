@@ -5,6 +5,8 @@ import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 import 'package:omni_card_ai/core/theme/app_theme.dart';
 
+import '../../../core/routes/route_name.dart';
+
 /// ============ GENERATED CARD MODEL ============
 class GeneratedCardModel {
   final String id;
@@ -186,8 +188,10 @@ class _AIFlashcardReviewScreenState
         ),
       );
 
-      context.pop();
-      context.pop();
+      // Thay vì pop() 2 lần, ta pop cho đến khi gặp DeckDetail
+      Navigator.of(context).popUntil((route) {
+        return route.settings.name == RouteName.deckDetail;
+      });
     } catch (e) {
       if (!mounted) return;
 
