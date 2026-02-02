@@ -6,26 +6,34 @@ part 'card_model.g.dart';
 class CardModel {
   Id id = Isar.autoIncrement;
 
-  //@Index(unique: true, replace: true)
   @Index()
-  String? remoteId; // UID từ Firebase
+  String? remoteId;
 
   @Index(type: IndexType.value, caseSensitive: false)
-  late String term; // Thuật ngữ
+  late String term;
 
   @Index(type: IndexType.value, caseSensitive: false)
-  late String definition; // Định nghĩa
+  late String definition;
 
-  String? mnemonic; // Gợi ý ghi nhớ
+  String? mnemonic;
 
-  // Thuật toán SRS
-  int stability = 0;
-  int difficulty = 0;
+   // ========== PHỤC VỤ TÍNH NĂNG TEXT-TO-SPEECH ==========
+  String frontLanguage = 'vi-VN'; // Mặc định là tiếng Việt
+  String backLanguage = 'vi-VN'; // Mặc định là tiếng Việt
+  bool isAutoPlayEnabled = false;
+
+  // ========== SM-2 FIELDS ==========
+  int repetition = 0;
+  double easinessFactor = 2.5;
+  int interval = 0;
+
+  @Index()
   DateTime nextReview = DateTime.now();
 
-  // Sync Metadata
+  // ========== SYNC METADATA ==========
+  String status = 'new';
   DateTime updatedAt = DateTime.now();
-  bool isDirty = true; 
+  bool isDirty = true;
 
   final deck = IsarLink<DeckModel>();
 }

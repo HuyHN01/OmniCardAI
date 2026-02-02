@@ -4,20 +4,27 @@ import 'package:omni_card_ai/core/theme/app_theme.dart';
 import 'package:omni_card_ai/core/routes/route_config.dart';
 import 'package:omni_card_ai/data/local/isar_service.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  await IsarService.init();
-
-  runApp(
-    ProviderScope(
-      overrides: [
-        isarProvider.overrideWithValue(IsarService.isar),
-      ],
-      child: const OmniCardApp(),
-    ),
-  );
+  final isar = await IsarService.init();
+  await dotenv.load(fileName: ".env");
+  try {
+    runApp(
+      ProviderScope(
+        overrides: [
+          isarProvider.overrideWithValue(isar),
+        ],
+        child: const OmniCardApp(),
+      ),
+    );
+  }
+  catch(e) {
+    debugPrint("Lỗi: $e");
+  }
+ 
 }
 
 class OmniCardApp extends StatelessWidget {

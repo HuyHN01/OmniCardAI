@@ -17,25 +17,40 @@ const DeckModelSchema = CollectionSchema(
   name: r'DeckModel',
   id: 7835046003316378680,
   properties: {
-    r'createdAt': PropertySchema(
+    r'calculateProgres': PropertySchema(
       id: 0,
+      name: r'calculateProgres',
+      type: IsarType.double,
+    ),
+    r'countCard': PropertySchema(
+      id: 1,
+      name: r'countCard',
+      type: IsarType.long,
+    ),
+    r'createdAt': PropertySchema(
+      id: 2,
       name: r'createdAt',
       type: IsarType.dateTime,
     ),
     r'description': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'description',
       type: IsarType.string,
     ),
-    r'isDirty': PropertySchema(id: 2, name: r'isDirty', type: IsarType.bool),
+    r'isDirty': PropertySchema(id: 4, name: r'isDirty', type: IsarType.bool),
+    r'isNewDeck': PropertySchema(
+      id: 5,
+      name: r'isNewDeck',
+      type: IsarType.bool,
+    ),
     r'remoteId': PropertySchema(
-      id: 3,
+      id: 6,
       name: r'remoteId',
       type: IsarType.string,
     ),
-    r'title': PropertySchema(id: 4, name: r'title', type: IsarType.string),
+    r'title': PropertySchema(id: 7, name: r'title', type: IsarType.string),
     r'updatedAt': PropertySchema(
-      id: 5,
+      id: 8,
       name: r'updatedAt',
       type: IsarType.dateTime,
     ),
@@ -119,12 +134,15 @@ void _deckModelSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeDateTime(offsets[0], object.createdAt);
-  writer.writeString(offsets[1], object.description);
-  writer.writeBool(offsets[2], object.isDirty);
-  writer.writeString(offsets[3], object.remoteId);
-  writer.writeString(offsets[4], object.title);
-  writer.writeDateTime(offsets[5], object.updatedAt);
+  writer.writeDouble(offsets[0], object.calculateProgres);
+  writer.writeLong(offsets[1], object.countCard);
+  writer.writeDateTime(offsets[2], object.createdAt);
+  writer.writeString(offsets[3], object.description);
+  writer.writeBool(offsets[4], object.isDirty);
+  writer.writeBool(offsets[5], object.isNewDeck);
+  writer.writeString(offsets[6], object.remoteId);
+  writer.writeString(offsets[7], object.title);
+  writer.writeDateTime(offsets[8], object.updatedAt);
 }
 
 DeckModel _deckModelDeserialize(
@@ -134,13 +152,13 @@ DeckModel _deckModelDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = DeckModel();
-  object.createdAt = reader.readDateTime(offsets[0]);
-  object.description = reader.readStringOrNull(offsets[1]);
+  object.createdAt = reader.readDateTime(offsets[2]);
+  object.description = reader.readStringOrNull(offsets[3]);
   object.id = id;
-  object.isDirty = reader.readBool(offsets[2]);
-  object.remoteId = reader.readStringOrNull(offsets[3]);
-  object.title = reader.readString(offsets[4]);
-  object.updatedAt = reader.readDateTime(offsets[5]);
+  object.isDirty = reader.readBool(offsets[4]);
+  object.remoteId = reader.readStringOrNull(offsets[6]);
+  object.title = reader.readString(offsets[7]);
+  object.updatedAt = reader.readDateTime(offsets[8]);
   return object;
 }
 
@@ -152,16 +170,22 @@ P _deckModelDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readDateTime(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 1:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readLong(offset)) as P;
     case 2:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 3:
       return (reader.readStringOrNull(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 5:
+      return (reader.readBool(offset)) as P;
+    case 6:
+      return (reader.readStringOrNull(offset)) as P;
+    case 7:
+      return (reader.readString(offset)) as P;
+    case 8:
       return (reader.readDateTime(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -392,6 +416,138 @@ extension DeckModelQueryWhere
 
 extension DeckModelQueryFilter
     on QueryBuilder<DeckModel, DeckModel, QFilterCondition> {
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition>
+  calculateProgresEqualTo(double value, {double epsilon = Query.epsilon}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'calculateProgres',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition>
+  calculateProgresGreaterThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'calculateProgres',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition>
+  calculateProgresLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'calculateProgres',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition>
+  calculateProgresBetween(
+    double lower,
+    double upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'calculateProgres',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition> countCardEqualTo(
+    int value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'countCard', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition>
+  countCardGreaterThan(int value, {bool include = false}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'countCard',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition> countCardLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'countCard',
+          value: value,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition> countCardBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'countCard',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
+    });
+  }
+
   QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition> createdAtEqualTo(
     DateTime value,
   ) {
@@ -679,6 +835,16 @@ extension DeckModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
         FilterCondition.equalTo(property: r'isDirty', value: value),
+      );
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterFilterCondition> isNewDeckEqualTo(
+    bool value,
+  ) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isNewDeck', value: value),
       );
     });
   }
@@ -1119,6 +1285,31 @@ extension DeckModelQueryLinks
 }
 
 extension DeckModelQuerySortBy on QueryBuilder<DeckModel, DeckModel, QSortBy> {
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByCalculateProgres() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'calculateProgres', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy>
+  sortByCalculateProgresDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'calculateProgres', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByCountCard() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countCard', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByCountCardDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countCard', Sort.desc);
+    });
+  }
+
   QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -1152,6 +1343,18 @@ extension DeckModelQuerySortBy on QueryBuilder<DeckModel, DeckModel, QSortBy> {
   QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByIsDirtyDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isDirty', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByIsNewDeck() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNewDeck', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> sortByIsNewDeckDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNewDeck', Sort.desc);
     });
   }
 
@@ -1194,6 +1397,31 @@ extension DeckModelQuerySortBy on QueryBuilder<DeckModel, DeckModel, QSortBy> {
 
 extension DeckModelQuerySortThenBy
     on QueryBuilder<DeckModel, DeckModel, QSortThenBy> {
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByCalculateProgres() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'calculateProgres', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy>
+  thenByCalculateProgresDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'calculateProgres', Sort.desc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByCountCard() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countCard', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByCountCardDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'countCard', Sort.desc);
+    });
+  }
+
   QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdAt', Sort.asc);
@@ -1242,6 +1470,18 @@ extension DeckModelQuerySortThenBy
     });
   }
 
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByIsNewDeck() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNewDeck', Sort.asc);
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByIsNewDeckDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isNewDeck', Sort.desc);
+    });
+  }
+
   QueryBuilder<DeckModel, DeckModel, QAfterSortBy> thenByRemoteId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'remoteId', Sort.asc);
@@ -1281,6 +1521,18 @@ extension DeckModelQuerySortThenBy
 
 extension DeckModelQueryWhereDistinct
     on QueryBuilder<DeckModel, DeckModel, QDistinct> {
+  QueryBuilder<DeckModel, DeckModel, QDistinct> distinctByCalculateProgres() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'calculateProgres');
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QDistinct> distinctByCountCard() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'countCard');
+    });
+  }
+
   QueryBuilder<DeckModel, DeckModel, QDistinct> distinctByCreatedAt() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'createdAt');
@@ -1298,6 +1550,12 @@ extension DeckModelQueryWhereDistinct
   QueryBuilder<DeckModel, DeckModel, QDistinct> distinctByIsDirty() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isDirty');
+    });
+  }
+
+  QueryBuilder<DeckModel, DeckModel, QDistinct> distinctByIsNewDeck() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isNewDeck');
     });
   }
 
@@ -1332,6 +1590,18 @@ extension DeckModelQueryProperty
     });
   }
 
+  QueryBuilder<DeckModel, double, QQueryOperations> calculateProgresProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'calculateProgres');
+    });
+  }
+
+  QueryBuilder<DeckModel, int, QQueryOperations> countCardProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'countCard');
+    });
+  }
+
   QueryBuilder<DeckModel, DateTime, QQueryOperations> createdAtProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdAt');
@@ -1347,6 +1617,12 @@ extension DeckModelQueryProperty
   QueryBuilder<DeckModel, bool, QQueryOperations> isDirtyProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isDirty');
+    });
+  }
+
+  QueryBuilder<DeckModel, bool, QQueryOperations> isNewDeckProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isNewDeck');
     });
   }
 

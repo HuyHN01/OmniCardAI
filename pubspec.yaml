@@ -17,7 +17,7 @@ dependencies:
 
   # --- Utilities ---
   flutter_dotenv: ^6.0.0
-  path_provider: ^2.1.2 
+  path_provider: ^2.1.5 
 
   # --- Firebase ---
   firebase_core: ^4.3.0
@@ -30,6 +30,13 @@ dependencies:
   # Bạn đang dùng bộ 3.2.1 thì giữ nguyên bộ này cho đồng bộ
   isar_community: ^3.2.1
   isar_community_flutter_libs: ^3.2.1
+  http: ^1.6.0
+  flutter_tts: ^4.2.5
+  audioplayers: ^6.5.1
+  crypto: ^3.0.7
+  google_mlkit_language_id: ^0.13.0
+  google_mlkit_text_recognition: ^0.15.0
+  image_picker: ^1.2.1
 
 dev_dependencies:
   flutter_test:
@@ -49,4 +56,5 @@ dev_dependencies:
 flutter:
   assets:
     - .env
+    - assets/images/
   uses-material-design: true

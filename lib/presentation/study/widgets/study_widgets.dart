@@ -78,7 +78,7 @@ class StudyProgressBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final progress = current / total;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -125,7 +125,7 @@ class CurvedBottomClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
     path.lineTo(0, size.height - 30);
-    
+
     // Create curved bottom
     path.quadraticBezierTo(
       size.width / 2,
@@ -133,10 +133,10 @@ class CurvedBottomClipper extends CustomClipper<Path> {
       size.width,
       size.height - 30,
     );
-    
+
     path.lineTo(size.width, 0);
     path.close();
-    
+
     return path;
   }
 
@@ -153,6 +153,7 @@ class StudyCardWidget extends StatelessWidget {
   final String? tag;
   final String? hint;
   final bool showAnswer;
+  final VoidCallback? onSpeak;
 
   const StudyCardWidget({
     super.key,
@@ -162,6 +163,7 @@ class StudyCardWidget extends StatelessWidget {
     this.tag,
     this.hint,
     this.showAnswer = true,
+    this.onSpeak,
   });
 
   @override
@@ -180,129 +182,154 @@ class StudyCardWidget extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Stack(
         children: [
-          // Image header với curved bottom
-          if (imageUrl != null)
-            Stack(
-              children: [
-                ClipPath(
-                  clipper: CurvedBottomClipper(),
-                  child: Container(
-                    height: 180,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(24),
-                      ),
-                      image: DecorationImage(
-                        image: NetworkImage(imageUrl!),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                // Tag overlay
-                if (tag != null)
-                  Positioned(
-                    top: 16,
-                    right: 16,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        tag!,
-                        style: const TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF4CAF50),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Image header với curved bottom
+              if (imageUrl != null)
+                Stack(
+                  children: [
+                    ClipPath(
+                      clipper: CurvedBottomClipper(),
+                      child: Container(
+                        height: 180,
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(24),
+                          ),
+                          image: DecorationImage(
+                            image: NetworkImage(imageUrl!),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
-            ),
-          
-          // Content
-          Padding(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              children: [
-                // Term
-                Text(
-                  term,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1A237E),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // Divider
-                Container(
-                  width: 40,
-                  height: 3,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2196F3),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                
-                // Definition (chỉ hiện khi showAnswer = true)
-                if (showAnswer)
-                  Text(
-                    definition,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 15,
-                      height: 1.6,
-                      color: Colors.grey[700],
-                    ),
-                  ),
-                
-                // Hint box
-                if (showAnswer && hint != null) ...[
-                  const SizedBox(height: 24),
-                  Container(
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF5F5F5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.lightbulb,
-                          color: Color(0xFF2196F3),
-                          size: 20,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
+
+                    // Tag overlay
+                    if (tag != null)
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                           child: Text(
-                            hint!,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey[700],
+                            tag!,
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF4CAF50),
                             ),
                           ),
                         ),
-                      ],
+                      ),
+                  ],
+                ),
+
+              // Content
+              Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  children: [
+                    // Term
+                    Text(
+                      term,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1A237E),
+                      ),
                     ),
-                  ),
-                ],
-              ],
+                    const SizedBox(height: 16),
+
+                    // Divider
+                    Container(
+                      width: 40,
+                      height: 3,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2196F3),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Definition (chỉ hiện khi showAnswer = true)
+                    if (showAnswer)
+                      Text(
+                        definition,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 15,
+                          height: 1.6,
+                          color: Colors.grey[700],
+                        ),
+                      ),
+
+                    // Hint box
+                    if (showAnswer && hint != null) ...[
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF5F5F5),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.lightbulb,
+                              color: Color(0xFF2196F3),
+                              size: 20,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                hint!,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontStyle: FontStyle.italic,
+                                  color: Colors.grey[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          // 3. Icon Loa (Speaker Icon) - Được ghim vào góc trên bên phải
+          Positioned(
+            top: 8,
+            right: 8,
+            child: Material(
+              // Dùng Material để hiện hiệu ứng Ripple (loang nước) khi chạm
+              color: Colors.transparent,
+              child: IconButton(
+                onPressed: onSpeak,
+                icon: Icon(
+                  Icons.volume_up_rounded,
+                  color: const Color(
+                    0xFF2196F3,
+                  ).withOpacity(0.7), // Màu xanh nhẹ theo theme
+                  size: 26,
+                ),
+                splashRadius: 24, // Giới hạn vùng loang nước cho đẹp
+                tooltip: 'Phát âm thanh',
+              ),
             ),
           ),
         ],
@@ -316,10 +343,7 @@ class StudyCardWidget extends StatelessWidget {
 class StackedCardsBackground extends StatelessWidget {
   final Widget child;
 
-  const StackedCardsBackground({
-    super.key,
-    required this.child,
-  });
+  const StackedCardsBackground({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -341,7 +365,7 @@ class StackedCardsBackground extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // Card thứ 2 (gần hơn)
         Transform.scale(
           scale: 0.96,
@@ -357,7 +381,7 @@ class StackedCardsBackground extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // Card chính (top)
         child,
       ],
@@ -395,9 +419,10 @@ class _FlippableCardState extends State<FlippableCard>
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    _animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _animation = Tween<double>(
+      begin: 0,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -425,7 +450,7 @@ class _FlippableCardState extends State<FlippableCard>
       builder: (context, child) {
         final angle = _animation.value * math.pi;
         final showFront = angle < math.pi / 2;
-        
+
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()

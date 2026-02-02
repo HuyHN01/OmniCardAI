@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:omni_card_ai/core/routes/route_name.dart';
 import '../widgets/stat_chip.dart'; // Import widget vừa tạo ở trên
 
 class CompletionPage extends StatefulWidget {
-  const CompletionPage({super.key});
+  final int deckId;
+  const CompletionPage({super.key, required this.deckId});
 
   @override
   State<CompletionPage> createState() => _CompletionPageState();
 }
 
 class _CompletionPageState extends State<CompletionPage> {
+ // Giả sử deckId được truyền vào hoặc lấy từ trạng thái
   // Biến trạng thái để kích hoạt animation sau khi build xong
   bool _startAnimation = false;
 
@@ -67,10 +71,11 @@ class _CompletionPageState extends State<CompletionPage> {
                   ),
                   alignment: Alignment.center,
                   // TODO: Thay thế Icon này bằng Image.asset('assets/images/trophy_3d.png')
-                  child: const Icon(
-                    Icons.emoji_events_rounded, // Placeholder icon Cúp
-                    size: 160,
-                    color: Color(0xFFFFD700), // Màu vàng Gold
+                  child: Image.asset(
+                    'assets/images/trophy_3d.png',
+                    height: 180,
+                    width: 180,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
@@ -146,9 +151,8 @@ class _CompletionPageState extends State<CompletionPage> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Điều hướng về trang chủ
-                    // context.go('/home'); // Sử dụng GoRouter
-                    Navigator.of(context).pop(); // Hoặc pop nếu là modal
+                    // Điều hướng về trang Deck Detail
+                    context.pop();            
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryBlue,
@@ -160,7 +164,7 @@ class _CompletionPageState extends State<CompletionPage> {
                     ),
                   ),
                   child: const Text(
-                    'Về trang chủ',
+                    'Xong',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
