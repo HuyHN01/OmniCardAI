@@ -8,113 +8,153 @@ class GroqService {
   static const String _baseUrl =
       'https://api.groq.com/openai/v1/chat/completions';
 
+  static const systemPrompt = '''
+    Role: You are an expert EdTech AI specializing in Flashcard creation.
+    Goal: Extract atomic learning concepts from USER_INPUT into a STRICT JSON OBJECT.
+
+    ### CRITICAL OUTPUT RULES:
+    1. You MUST return a valid JSON Object.
+    2. The root object MUST have exactly one key: "flashcards".
+    3. The value of "flashcards" must be an Array of objects.
+    4. DO NOT write any text, markdown, or explanations outside the JSON.
+    5. DO NOT add tags like [flashcard]. Just the raw JSON string.
+
+    ### DATA STRUCTURE:
+    {
+      "flashcards": [
+        {
+          "front": "Term (keep original language)",
+          "back": "Definition (translate ONLY if it is a vocab list)",
+          "front_lang": "Language Code (e.g., en-US or vi-VN)",
+          "back_lang": "Language Code (e.g., en-US or vi-VN)"
+        }
+      ]
+    }
+
+    ### EXAMPLES (Study these patterns carefully):
+
+    Example 1 (Vocabulary List - English Term / Vietnamese Def):
+    Input: "Quantum Superposition: Trạng thái hệ lượng tử tồn tại đồng thời..."
+    Output:
+    { "flashcards": [ { "front": "Quantum Superposition", "back": "Trạng thái hệ lượng tử tồn tại đồng thời trong nhiều cấu hình.", "front_lang": "en-US", "back_lang": "vi-VN" } ] }
+
+    Example 2 (Pure Vietnamese - Context/History):
+    Input: "Chiến tranh lạnh là giai đoạn căng thẳng địa chính trị..."
+    Output:
+    { "flashcards": [ { "front": "Chiến tranh lạnh là gì?", "back": "Giai đoạn căng thẳng địa chính trị giữa Liên Xô và Mỹ sau CTTG 2.", "front_lang": "vi-VN", "back_lang": "vi-VN" } ] }
+
+    Example 3 (Technical English - Keep English/English):
+    Input: "Widget - The basic building block of Flutter UI."
+    Output:
+    { "flashcards": [ { "front": "Widget", "back": "The basic building block of Flutter UI.", "front_lang": "en-US", "back_lang": "en-US" } ] }
+
+    ### LOGIC & ALGORITHM:
+    1. Detect Structure:
+      - IF input is a list (Term: Definition): Split by separator. KEEP "front" CLEAN (Do NOT add "What is?" or "là gì?").
+      - IF input is a paragraph: Extract key concept -> Explanation. Add question phrasing if necessary.
+    2. Detect Language Context:
+      - English Technical Term -> Keep "front" & "back" in English (en-US).
+      - English Vocabulary Learning -> "front" in English, "back" in Vietnamese.
+      - Vietnamese Content -> Keep both in Vietnamese (vi-VN).
+
+    Now, process the USER_INPUT.
+    ''';
+  
+
   Future<List<Map<String, String>>> generateFlashcards(String userText) async {
     if (_apiKey.isEmpty) {
       throw Exception('Missing GROQ_API_KEY');
     }
-    
+
     try {
-      final response = await http.post(
-        Uri.parse(_baseUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $_apiKey',
-        },
-        body: jsonEncode({
-          "model": "llama-3.1-8b-instant",
-          "messages": [
-            {
-              "role": "system",
-              "content": """
-                You are an expert EdTech Content Creator specializing in Spaced Repetition systems (SM-2).
-
-                TASK:
-                Analyze the provided text and generate atomic flashcards following the Minimum Information Principle.
-
-                For each flashcard:
-                - "front": short term or question.
-                - "back": concise explanation or definition.
-                - Automatically detect and assign language codes.
-
-                If the text is for English learning, prefer:
-                - front = English
-                - back = Vietnamese.
-
-                OUTPUT FORMAT (STRICT JSON):
-                Return ONLY a valid raw JSON array.
-                No Markdown. No explanations. No text before or after JSON.
-
-                Each object must contain exactly:
-                "front", "back", "front_lang", "back_lang".
-
-                Language codes must be exactly:
-                - "en-US"
-                - "vi-VN"
-
-                RULES:
-                - Generate 5–15 cards depending on text length.
-                - "front" must be short when possible.
-                - "back" must be 1 concise sentence or short phrase.
-                - For technical topics, keep both sides in the same language unless translation clearly improves learning.
-                - If the input is too short, unclear, or nonsensical, return [].
-                - Any output that is not valid JSON is strictly forbidden.
-
-                EXAMPLE:
-                [
-                  {
-                    "front": "Photosynthesis",
-                    "back": "Quá trình thực vật chuyển đổi ánh sáng mặt trời thành năng lượng hóa học.",
-                    "front_lang": "en-US",
-                    "back_lang": "vi-VN"
-                  }
-                ]
-
-              """,
+      final response = await http
+          .post(
+            Uri.parse(_baseUrl),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $_apiKey',
             },
-            {"role": "user", "content": userText},
-          ],
-          "temperature": 0.2, // Giữ nhiệt độ thấp để AI trả về đúng định dạng
-          "top_p": 0.9,
-          "max_tokens": 1500,
-        }),
-      ).timeout(const Duration(seconds: 30));
+            body: jsonEncode({
+              "model": "llama-3.3-70b-versatile", 
+              "messages": [
+                {"role": "system", "content": systemPrompt},
+                {"role": "user", "content": userText},
+              ],
+              "response_format": {"type": "json_object"}, 
+              "temperature": 0.1, 
+              "top_p": 0.9,
+              "max_tokens": 1500,
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
-        // Xử lý dữ liệu trả về (UTF-8 decode để tránh lỗi font tiếng Việt)
+        // Decode UTF-8
         final data = jsonDecode(utf8.decode(response.bodyBytes));
-
         String content = data['choices'][0]['message']['content'];
 
-        // Vệ sinh dữ liệu: Đôi khi Llama vẫn trả về markdown ```json ... ```
-        content = content.replaceAll(RegExp(r'```(?:json)?'), '').trim();
+        debugPrint('RAW MODEL OUTPUT:\n$content');
 
-        // Parse JSON String thành List Map
-        final List<dynamic> jsonList = jsonDecode(content);
+        // Parse với logic mới (Safety Net cho JSON Object)
+        final List<Map<String, dynamic>> rawList = _parseGroqJsonObject(content);
 
-        if (jsonList.any((e) =>
-          e['front'] == null ||
-          e['back'] == null ||
-          e['front_lang'] == null ||
-          e['back_lang'] == null)) {
-            throw Exception('Invalid flashcard schema');
-          } 
+        return rawList.map((item) {
+          return {
+            'term': item['front'].toString(),
+            'definition': item['back'].toString(),
+            'frontLanguage': item['front_lang'].toString(),
+            'backLanguage': item['back_lang'].toString(),
+          };
+        }).toList();
 
-        return jsonList
-            .map(
-              (item) => {
-                'term': item['front'].toString(),
-                'definition': item['back'].toString(),
-                'frontLanguage': item['front_lang'].toString(),
-                'backLanguage': item['back_lang'].toString(),
-              },
-            )
-            .toList();
       } else {
         throw Exception('Failed to load from Groq: ${response.body}');
       }
     } catch (e, stackTrace) {
-      debugPrint(stackTrace.toString());
+      debugPrint("Error details: $stackTrace");
       throw Exception('Error calling Groq API: $e');
+    }
+  }
+
+  List<Map<String, dynamic>> _parseGroqJsonObject(String rawContent) {
+    try {
+      // 1. Vệ sinh sơ bộ (dù JSON Mode đã khá sạch, nhưng cẩn tắc vô áy náy)
+      String cleaned = rawContent.replaceAll(RegExp(r'```(?:json)?'), '').trim();
+      
+      // 2. Decode thẳng JSON (Vì JSON Mode đảm bảo trả về valid JSON)
+      final decoded = jsonDecode(cleaned);
+
+      // 3. Trích xuất mảng "flashcards"
+      if (decoded is Map<String, dynamic> && decoded.containsKey('flashcards')) {
+        final list = decoded['flashcards'];
+        if (list is List) {
+           // Validate từng item trong list
+           final List<Map<String, dynamic>> result = [];
+           for (var item in list) {
+             if (item is Map<String, dynamic> && 
+                 item.containsKey('front') && 
+                 item.containsKey('back')) {
+               result.add(item);
+             }
+           }
+           return result;
+        }
+      }
+      
+      throw const FormatException('JSON does not contain "flashcards" array');
+
+    } catch (e) {
+      debugPrint('JSON Parse Logic Error: $e');
+      // Fallback: Nếu model lỡ quên wrapper object (hiếm), thử parse như array cũ
+      try {
+         final match = RegExp(r'\[.*\]', dotAll: true).firstMatch(rawContent);
+         if (match != null) {
+           final list = jsonDecode(match.group(0)!);
+           return List<Map<String, dynamic>>.from(list);
+         }
+      } catch (_) {}
+      
+      throw FormatException('Critical JSON parsing failure: $e');
     }
   }
 }
