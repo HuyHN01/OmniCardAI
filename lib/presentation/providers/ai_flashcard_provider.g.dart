@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'batch_card_provider.dart';
+part of 'ai_flashcard_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$batchCardNotifierHash() => r'970fc9559c1b7d645a47485a5cc86c507689f11c';
+String _$aiFlashcardHash() => r'aa01470517ab5dfb556a7e426384b361b7cc7b20';
 
-/// See also [BatchCardNotifier].
-@ProviderFor(BatchCardNotifier)
-final batchCardNotifierProvider =
-    AutoDisposeNotifierProvider<BatchCardNotifier, void>.internal(
-      BatchCardNotifier.new,
-      name: r'batchCardNotifierProvider',
+/// See also [AiFlashcard].
+@ProviderFor(AiFlashcard)
+final aiFlashcardProvider =
+    AutoDisposeNotifierProvider<AiFlashcard, AiFlashcardState>.internal(
+      AiFlashcard.new,
+      name: r'aiFlashcardProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$batchCardNotifierHash,
+          : _$aiFlashcardHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$BatchCardNotifier = AutoDisposeNotifier<void>;
+typedef _$AiFlashcard = AutoDisposeNotifier<AiFlashcardState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

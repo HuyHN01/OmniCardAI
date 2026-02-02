@@ -1,9 +1,12 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:omni_card_ai/data/models/card_model.dart';
 import 'package:omni_card_ai/core/services/sm2_service.dart';
 import 'package:omni_card_ai/presentation/providers/repository_provider.dart';
 
-// State của phiên học
+// Dòng này cần thiết để riverpod_generator hoạt động
+part 'study_session_provider.g.dart';
+
+// --- STATE CLASS (Giữ nguyên logic cũ) ---
 class StudySessionState {
   final List<CardModel> cards;
   final int currentIndex;
@@ -17,7 +20,7 @@ class StudySessionState {
     this.isLoading = true,
   });
 
-  CardModel? get currentCard => 
+  CardModel? get currentCard =>
       (cards.isNotEmpty && currentIndex < cards.length) ? cards[currentIndex] : null;
 
   int get progress => currentIndex + 1;
@@ -38,22 +41,30 @@ class StudySessionState {
   }
 }
 
-// Notifier quản lý logic
-class StudyNotifier extends StateNotifier<StudySessionState> {
-  final Ref ref;
-  final int deckId;
+// --- NOTIFIER (Đã sửa lỗi arg) ---
+@riverpod
+class StudySession extends _$StudySession {
   final Sm2Service _sm2Service = Sm2Service();
+  
+  // 1. Khai báo biến để lưu deckId
+  late int deckId;
 
-  StudyNotifier(this.ref, this.deckId) : super(StudySessionState()) {
+  @override
+  StudySessionState build(int deckId) {
+    // 2. Lưu tham số deckId vào biến của class để dùng ở nơi khác
+    this.deckId = deckId;
+    
+    // Gọi hàm load dữ liệu ngay khi khởi tạo
     _loadDueCards();
+    return StudySessionState(); 
   }
 
   Future<void> _loadDueCards() async {
     try {
-      final cards = await ref.read(deckRepositoryProvider).getDueCards(deckId);
+      // 3. Sửa 'arg' thành 'this.deckId'
+      final cards = await ref.read(deckRepositoryProvider).getDueCards(this.deckId);
       state = state.copyWith(cards: cards, isLoading: false);
     } catch (e) {
-      // Handle error (ví dụ: state = state.copyWith(error: e))
       state = state.copyWith(isLoading: false);
     }
   }
@@ -66,11 +77,10 @@ class StudyNotifier extends StateNotifier<StudySessionState> {
     final updatedCard = _sm2Service.calculate(currentCard, rating);
 
     // 2. Lưu xuống DB
-    // Lưu ý: Ta có thể lưu ngay hoặc gom lại lưu 1 lần cuối buổi. 
-    // Để an toàn (tránh crash mất dữ liệu), ta lưu ngay.
+    // 3. Sửa 'arg' thành 'this.deckId'
     await ref.read(deckRepositoryProvider).addCardsToDeck(
-      deckId, 
-      [updatedCard], // Tận dụng hàm save có sẵn, nó sẽ update vì ID đã có
+      this.deckId, 
+      [updatedCard], 
     );
 
     // 3. Chuyển sang thẻ tiếp theo
@@ -81,8 +91,3 @@ class StudyNotifier extends StateNotifier<StudySessionState> {
     }
   }
 }
-
-// Provider Factory để tạo Notifier theo deckId
-final studySessionProvider = StateNotifierProvider.family.autoDispose<StudyNotifier, StudySessionState, int>(
-  (ref, deckId) => StudyNotifier(ref, deckId),
-);
