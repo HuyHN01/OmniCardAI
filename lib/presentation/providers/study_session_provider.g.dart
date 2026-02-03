@@ -6,158 +6,103 @@ part of 'study_session_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$studySessionHash() => r'6d7d82a8ff350322ef6ba5693b63cb0aff24b8b5';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-abstract class _$StudySession
-    extends BuildlessAutoDisposeNotifier<StudySessionState> {
-  late final int deckId;
-
-  StudySessionState build(int deckId);
-}
-
-/// See also [StudySession].
 @ProviderFor(StudySession)
-const studySessionProvider = StudySessionFamily();
+const studySessionProvider = StudySessionFamily._();
 
-/// See also [StudySession].
-class StudySessionFamily extends Family<StudySessionState> {
-  /// See also [StudySession].
-  const StudySessionFamily();
+final class StudySessionProvider
+    extends $NotifierProvider<StudySession, StudySessionState> {
+  const StudySessionProvider._({
+    required StudySessionFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'studySessionProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [StudySession].
-  StudySessionProvider call(int deckId) {
-    return StudySessionProvider(deckId);
+  @override
+  String debugGetCreateSourceHash() => _$studySessionHash();
+
+  @override
+  String toString() {
+    return r'studySessionProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  StudySessionProvider getProviderOverride(
-    covariant StudySessionProvider provider,
-  ) {
-    return call(provider.deckId);
-  }
+  StudySession create() => StudySession();
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'studySessionProvider';
-}
-
-/// See also [StudySession].
-class StudySessionProvider
-    extends AutoDisposeNotifierProviderImpl<StudySession, StudySessionState> {
-  /// See also [StudySession].
-  StudySessionProvider(int deckId)
-    : this._internal(
-        () => StudySession()..deckId = deckId,
-        from: studySessionProvider,
-        name: r'studySessionProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$studySessionHash,
-        dependencies: StudySessionFamily._dependencies,
-        allTransitiveDependencies:
-            StudySessionFamily._allTransitiveDependencies,
-        deckId: deckId,
-      );
-
-  StudySessionProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.deckId,
-  }) : super.internal();
-
-  final int deckId;
-
-  @override
-  StudySessionState runNotifierBuild(covariant StudySession notifier) {
-    return notifier.build(deckId);
-  }
-
-  @override
-  Override overrideWith(StudySession Function() create) {
-    return ProviderOverride(
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(StudySessionState value) {
+    return $ProviderOverride(
       origin: this,
-      override: StudySessionProvider._internal(
-        () => create()..deckId = deckId,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        deckId: deckId,
-      ),
+      providerOverride: $SyncValueProvider<StudySessionState>(value),
     );
   }
 
   @override
-  AutoDisposeNotifierProviderElement<StudySession, StudySessionState>
-  createElement() {
-    return _StudySessionProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is StudySessionProvider && other.deckId == deckId;
+    return other is StudySessionProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, deckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin StudySessionRef on AutoDisposeNotifierProviderRef<StudySessionState> {
-  /// The parameter `deckId` of this provider.
-  int get deckId;
-}
+String _$studySessionHash() => r'c6955ef76cae0028edb19bf8e228229427c4fb50';
 
-class _StudySessionProviderElement
-    extends AutoDisposeNotifierProviderElement<StudySession, StudySessionState>
-    with StudySessionRef {
-  _StudySessionProviderElement(super.provider);
+final class StudySessionFamily extends $Family
+    with
+        $ClassFamilyOverride<
+          StudySession,
+          StudySessionState,
+          StudySessionState,
+          StudySessionState,
+          int
+        > {
+  const StudySessionFamily._()
+    : super(
+        retry: null,
+        name: r'studySessionProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  StudySessionProvider call(int deckId) =>
+      StudySessionProvider._(argument: deckId, from: this);
 
   @override
-  int get deckId => (origin as StudySessionProvider).deckId;
+  String toString() => r'studySessionProvider';
 }
 
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$StudySession extends $Notifier<StudySessionState> {
+  late final _$args = ref.$arg as int;
+  int get deckId => _$args;
+
+  StudySessionState build(int deckId);
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build(_$args);
+    final ref = this.ref as $Ref<StudySessionState, StudySessionState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<StudySessionState, StudySessionState>,
+              StudySessionState,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

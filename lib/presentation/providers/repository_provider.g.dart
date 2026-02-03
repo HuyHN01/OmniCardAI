@@ -6,39 +6,87 @@ part of 'repository_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$isarHash() => r'd2a5fe4ec626f7a1f75440ebaaa13dd81b907e25';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [isar].
 @ProviderFor(isar)
-final isarProvider = AutoDisposeProvider<Isar>.internal(
-  isar,
-  name: r'isarProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$isarHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const isarProvider = IsarProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef IsarRef = AutoDisposeProviderRef<Isar>;
-String _$deckRepositoryHash() => r'd6c4c0a19ce5c254477b2645c9cae9ce73f72687';
+final class IsarProvider extends $FunctionalProvider<Isar, Isar, Isar>
+    with $Provider<Isar> {
+  const IsarProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isarProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
-/// See also [deckRepository].
+  @override
+  String debugGetCreateSourceHash() => _$isarHash();
+
+  @$internal
+  @override
+  $ProviderElement<Isar> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Isar create(Ref ref) {
+    return isar(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Isar value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Isar>(value),
+    );
+  }
+}
+
+String _$isarHash() => r'd4b68488fdc45d47b27274e022944042abfa9385';
+
 @ProviderFor(deckRepository)
-final deckRepositoryProvider = AutoDisposeProvider<IDeckRepository>.internal(
-  deckRepository,
-  name: r'deckRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$deckRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const deckRepositoryProvider = DeckRepositoryProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DeckRepositoryRef = AutoDisposeProviderRef<IDeckRepository>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class DeckRepositoryProvider
+    extends
+        $FunctionalProvider<IDeckRepository, IDeckRepository, IDeckRepository>
+    with $Provider<IDeckRepository> {
+  const DeckRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deckRepositoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deckRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<IDeckRepository> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  IDeckRepository create(Ref ref) {
+    return deckRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(IDeckRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<IDeckRepository>(value),
+    );
+  }
+}
+
+String _$deckRepositoryHash() => r'f254b71afd9cfc2c8511e399406f70248c4fb0f2';

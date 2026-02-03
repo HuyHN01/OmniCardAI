@@ -223,7 +223,7 @@ class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
             onPressed: () async {
               Navigator.pop(context);
               debugPrint('Delete deck: ${deck.title}');
-              await ref.read(deckNotifierProvider.notifier).deleteDeck(deck.id); 
+              await ref.read(deckProvider.notifier).deleteDeck(deck.id); 
             },
             child: const Text(
               'Xóa',
@@ -241,7 +241,7 @@ class _DeckLibraryScreenState extends ConsumerState<DeckLibraryScreen> {
       initialTitle: deck.title, 
       initialDescription: deck.description ?? '', 
       onSave: (title, description) async {
-        await ref.read(deckNotifierProvider.notifier).updateDeck(
+        await ref.read(deckProvider.notifier).updateDeck(
           deck,
           title: title,
           desc: description

@@ -45,15 +45,15 @@ dependencies:
   # State Management
   # ------------------------------
 
-  flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.3.5
+  flutter_riverpod: ^3.0.3
+  riverpod_annotation: ^3.0.3
 
   # ------------------------------
   # Database
   # ------------------------------
 
-  isar_community: ^3.2.1
-  isar_community_flutter_libs: ^3.2.1
+  isar_community: ^3.3.0
+  isar_community_flutter_libs: ^3.3.0
 
   # ------------------------------
   # AI & ML
@@ -85,8 +85,8 @@ dev_dependencies:
   # ------------------------------
 
   build_runner: ^2.4.15
-  riverpod_generator: ^2.4.0
-  isar_community_generator: ^3.2.1
+  riverpod_generator: ^3.0.3
+  isar_community_generator: ^3.3.0
 
 # ==================================================
 # Flutter Configuration

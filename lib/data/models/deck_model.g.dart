@@ -103,7 +103,7 @@ const DeckModelSchema = CollectionSchema(
   getId: _deckModelGetId,
   getLinks: _deckModelGetLinks,
   attach: _deckModelAttach,
-  version: '3.3.0-dev.1',
+  version: '3.3.0',
 );
 
 int _deckModelEstimateSize(

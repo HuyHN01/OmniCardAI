@@ -14,10 +14,10 @@ class SearchQuery extends _$SearchQuery {
 
 // 2. Provider xử lý việc truy vấn Database dựa trên từ khóa
 @riverpod
-Stream<List<DeckModel>> searchResult(SearchResultRef ref) {
+Stream<List<DeckModel>> searchResult(Ref ref) {
   final query = ref.watch(searchQueryProvider).toLowerCase();
 
-  final deckAsync = ref.watch(deckNotifierProvider);
+  final deckAsync = ref.watch(deckProvider);
 
   return deckAsync.when(
     data: (decks) {

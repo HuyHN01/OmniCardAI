@@ -205,7 +205,7 @@ class _ManualBatchCreateCardsScreenState extends ConsumerState<ManualBatchCreate
       //   deckId: widget.deckId,
       //   cards: completeCards.map((c) => c.toMap()).toList(),
       // );
-      await ref.read(batchCardNotifierProvider.notifier).saveAll(
+      await ref.read(batchCardProvider.notifier).saveAll(
         deckId: widget.deckId, 
         forms: completeCards
       );

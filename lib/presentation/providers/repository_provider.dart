@@ -7,13 +7,13 @@ part 'repository_provider.g.dart';
 
 // 1. Provider cho Isar instance (sẽ được khởi tạo ở main)
 @riverpod
-Isar isar(IsarRef ref) {
+Isar isar(Ref ref) {
   throw UnimplementedError('Phải override isarProvider trong ProviderScope ở main.dart');
 }
 
 // 2. Provider cho DeckRepository
 @riverpod
-IDeckRepository deckRepository(DeckRepositoryRef ref) {
+IDeckRepository deckRepository(Ref ref) {
   final isar = ref.watch(isarProvider);
   return DeckRepositoryImpl(isar);
 }

@@ -6,262 +6,154 @@ part of 'deck_detail_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$deckDetailHash() => r'6999ea3240d8cc3373c97774a4739b9509d3b4b8';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [deckDetail].
 @ProviderFor(deckDetail)
-const deckDetailProvider = DeckDetailFamily();
+const deckDetailProvider = DeckDetailFamily._();
 
-/// See also [deckDetail].
-class DeckDetailFamily extends Family<AsyncValue<DeckModel?>> {
-  /// See also [deckDetail].
-  const DeckDetailFamily();
+final class DeckDetailProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<DeckModel?>,
+          DeckModel?,
+          Stream<DeckModel?>
+        >
+    with $FutureModifier<DeckModel?>, $StreamProvider<DeckModel?> {
+  const DeckDetailProvider._({
+    required DeckDetailFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'deckDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [deckDetail].
-  DeckDetailProvider call(int deckId) {
-    return DeckDetailProvider(deckId);
+  @override
+  String debugGetCreateSourceHash() => _$deckDetailHash();
+
+  @override
+  String toString() {
+    return r'deckDetailProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $StreamProviderElement<DeckModel?> $createElement($ProviderPointer pointer) =>
+      $StreamProviderElement(pointer);
+
+  @override
+  Stream<DeckModel?> create(Ref ref) {
+    final argument = this.argument as int;
+    return deckDetail(ref, argument);
   }
 
   @override
-  DeckDetailProvider getProviderOverride(
-    covariant DeckDetailProvider provider,
-  ) {
-    return call(provider.deckId);
+  bool operator ==(Object other) {
+    return other is DeckDetailProvider && other.argument == argument;
   }
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'deckDetailProvider';
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-/// See also [deckDetail].
-class DeckDetailProvider extends AutoDisposeStreamProvider<DeckModel?> {
-  /// See also [deckDetail].
-  DeckDetailProvider(int deckId)
-    : this._internal(
-        (ref) => deckDetail(ref as DeckDetailRef, deckId),
-        from: deckDetailProvider,
+String _$deckDetailHash() => r'0cda4c54b3c0de899b71d347ae685ce4144244a5';
+
+final class DeckDetailFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<DeckModel?>, int> {
+  const DeckDetailFamily._()
+    : super(
+        retry: null,
         name: r'deckDetailProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$deckDetailHash,
-        dependencies: DeckDetailFamily._dependencies,
-        allTransitiveDependencies: DeckDetailFamily._allTransitiveDependencies,
-        deckId: deckId,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  DeckDetailProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.deckId,
-  }) : super.internal();
-
-  final int deckId;
+  DeckDetailProvider call(int deckId) =>
+      DeckDetailProvider._(argument: deckId, from: this);
 
   @override
-  Override overrideWith(
-    Stream<DeckModel?> Function(DeckDetailRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: DeckDetailProvider._internal(
-        (ref) => create(ref as DeckDetailRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        deckId: deckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<DeckModel?> createElement() {
-    return _DeckDetailProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is DeckDetailProvider && other.deckId == deckId;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, deckId.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'deckDetailProvider';
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin DeckDetailRef on AutoDisposeStreamProviderRef<DeckModel?> {
-  /// The parameter `deckId` of this provider.
-  int get deckId;
-}
-
-class _DeckDetailProviderElement
-    extends AutoDisposeStreamProviderElement<DeckModel?>
-    with DeckDetailRef {
-  _DeckDetailProviderElement(super.provider);
-
-  @override
-  int get deckId => (origin as DeckDetailProvider).deckId;
-}
-
-String _$deckCardsHash() => r'2ea4f17f0e2b44d6db9e38768cac6aa6942976c9';
-
-/// See also [deckCards].
 @ProviderFor(deckCards)
-const deckCardsProvider = DeckCardsFamily();
+const deckCardsProvider = DeckCardsFamily._();
 
-/// See also [deckCards].
-class DeckCardsFamily extends Family<AsyncValue<List<CardModel>>> {
-  /// See also [deckCards].
-  const DeckCardsFamily();
+final class DeckCardsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<CardModel>>,
+          List<CardModel>,
+          Stream<List<CardModel>>
+        >
+    with $FutureModifier<List<CardModel>>, $StreamProvider<List<CardModel>> {
+  const DeckCardsProvider._({
+    required DeckCardsFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'deckCardsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [deckCards].
-  DeckCardsProvider call(int deckId) {
-    return DeckCardsProvider(deckId);
+  @override
+  String debugGetCreateSourceHash() => _$deckCardsHash();
+
+  @override
+  String toString() {
+    return r'deckCardsProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  DeckCardsProvider getProviderOverride(covariant DeckCardsProvider provider) {
-    return call(provider.deckId);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+  $StreamProviderElement<List<CardModel>> $createElement(
+    $ProviderPointer pointer,
+  ) => $StreamProviderElement(pointer);
 
   @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'deckCardsProvider';
-}
-
-/// See also [deckCards].
-class DeckCardsProvider extends AutoDisposeStreamProvider<List<CardModel>> {
-  /// See also [deckCards].
-  DeckCardsProvider(int deckId)
-    : this._internal(
-        (ref) => deckCards(ref as DeckCardsRef, deckId),
-        from: deckCardsProvider,
-        name: r'deckCardsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$deckCardsHash,
-        dependencies: DeckCardsFamily._dependencies,
-        allTransitiveDependencies: DeckCardsFamily._allTransitiveDependencies,
-        deckId: deckId,
-      );
-
-  DeckCardsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.deckId,
-  }) : super.internal();
-
-  final int deckId;
-
-  @override
-  Override overrideWith(
-    Stream<List<CardModel>> Function(DeckCardsRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: DeckCardsProvider._internal(
-        (ref) => create(ref as DeckCardsRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        deckId: deckId,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeStreamProviderElement<List<CardModel>> createElement() {
-    return _DeckCardsProviderElement(this);
+  Stream<List<CardModel>> create(Ref ref) {
+    final argument = this.argument as int;
+    return deckCards(ref, argument);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is DeckCardsProvider && other.deckId == deckId;
+    return other is DeckCardsProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, deckId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin DeckCardsRef on AutoDisposeStreamProviderRef<List<CardModel>> {
-  /// The parameter `deckId` of this provider.
-  int get deckId;
-}
+String _$deckCardsHash() => r'28b5a95b97392003385bf96577e5fd2eddb55788';
 
-class _DeckCardsProviderElement
-    extends AutoDisposeStreamProviderElement<List<CardModel>>
-    with DeckCardsRef {
-  _DeckCardsProviderElement(super.provider);
+final class DeckCardsFamily extends $Family
+    with $FunctionalFamilyOverride<Stream<List<CardModel>>, int> {
+  const DeckCardsFamily._()
+    : super(
+        retry: null,
+        name: r'deckCardsProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  DeckCardsProvider call(int deckId) =>
+      DeckCardsProvider._(argument: deckId, from: this);
 
   @override
-  int get deckId => (origin as DeckCardsProvider).deckId;
+  String toString() => r'deckCardsProvider';
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
