@@ -4,57 +4,97 @@ publish_to: 'none'
 
 version: 1.0.0+1
 
+# ==================================================
+# Environment
+# ==================================================
+
 environment:
   sdk: '>=3.10.4 <4.0.0'
+
+# ==================================================
+# Dependencies
+# ==================================================
 
 dependencies:
   flutter:
     sdk: flutter
 
-  # --- UI & Routing ---
+  # ------------------------------
+  # UI & Routing
+  # ------------------------------
+
   cupertino_icons: ^1.0.8
   go_router: ^17.0.1
 
-  # --- Utilities ---
-  flutter_dotenv: ^6.0.0
-  path_provider: ^2.1.5 
+  # ------------------------------
+  # Utilities
+  # ------------------------------
 
-  # --- Firebase ---
+  flutter_dotenv: ^6.0.0
+  path_provider: ^2.1.5
+  crypto: ^3.0.7
+  http: ^1.6.0
+
+  # ------------------------------
+  # Firebase
+  # ------------------------------
+
   firebase_core: ^4.3.0
 
-  # --- State Management (Riverpod Series 2.x) ---
+  # ------------------------------
+  # State Management
+  # ------------------------------
+
   flutter_riverpod: ^2.6.1
   riverpod_annotation: ^2.3.5
 
-  # --- Database (Isar Community) ---
-  # Bạn đang dùng bộ 3.2.1 thì giữ nguyên bộ này cho đồng bộ
+  # ------------------------------
+  # Database
+  # ------------------------------
+
   isar_community: ^3.2.1
   isar_community_flutter_libs: ^3.2.1
-  http: ^1.6.0
-  flutter_tts: ^4.2.5
-  audioplayers: ^6.5.1
-  crypto: ^3.0.7
+
+  # ------------------------------
+  # AI & ML
+  # ------------------------------
+
   google_mlkit_language_id: ^0.13.0
   google_mlkit_text_recognition: ^0.15.0
+
+  # ------------------------------
+  # Media & Audio
+  # ------------------------------
+
+  flutter_tts: ^4.2.5
+  audioplayers: ^6.5.1
   image_picker: ^1.2.1
+
+# ==================================================
+# Dev Dependencies
+# ==================================================
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
+
   flutter_lints: ^6.0.0
 
-  # --- Code Generation ---
+  # ------------------------------
+  # Code Generation
+  # ------------------------------
+
   build_runner: ^2.4.15
-  
-  # [FIX QUAN TRỌNG]: Hạ xuống 2.4.0 để dùng chung Analyzer v6 với Isar
   riverpod_generator: ^2.4.0
-  
-  # Giữ nguyên 3.2.1 để khớp với dependencies bên trên
   isar_community_generator: ^3.2.1
 
+# ==================================================
+# Flutter Configuration
+# ==================================================
+
 flutter:
+  uses-material-design: true
+
   assets:
     - .env
     - assets/images/
-  uses-material-design: true
