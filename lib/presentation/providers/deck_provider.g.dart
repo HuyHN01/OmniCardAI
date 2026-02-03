@@ -6,21 +6,50 @@ part of 'deck_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(DeckNotifier)
+const deckProvider = DeckNotifierProvider._();
+
+final class DeckNotifierProvider
+    extends $StreamNotifierProvider<DeckNotifier, List<DeckModel>> {
+  const DeckNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'deckProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$deckNotifierHash();
+
+  @$internal
+  @override
+  DeckNotifier create() => DeckNotifier();
+}
+
 String _$deckNotifierHash() => r'4f4024065ac5db5bdf38272bb592144aa4c1a489';
 
-/// See also [DeckNotifier].
-@ProviderFor(DeckNotifier)
-final deckNotifierProvider =
-    AutoDisposeStreamNotifierProvider<DeckNotifier, List<DeckModel>>.internal(
-      DeckNotifier.new,
-      name: r'deckNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$deckNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$DeckNotifier = AutoDisposeStreamNotifier<List<DeckModel>>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+abstract class _$DeckNotifier extends $StreamNotifier<List<DeckModel>> {
+  Stream<List<DeckModel>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<List<DeckModel>>, List<DeckModel>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<DeckModel>>, List<DeckModel>>,
+              AsyncValue<List<DeckModel>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}

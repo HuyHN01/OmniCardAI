@@ -145,7 +145,7 @@ const CardModelSchema = CollectionSchema(
   getId: _cardModelGetId,
   getLinks: _cardModelGetLinks,
   attach: _cardModelAttach,
-  version: '3.3.0-dev.1',
+  version: '3.3.0',
 );
 
 int _cardModelEstimateSize(

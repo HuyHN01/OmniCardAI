@@ -5,7 +5,7 @@ import 'package:omni_card_ai/data/models/card_model.dart';
 part 'deck_detail_provider.g.dart';
 
 @riverpod
-Stream<DeckModel?> deckDetail(DeckDetailRef ref, int deckId) {
+Stream<DeckModel?> deckDetail(Ref ref, int deckId) {
   final repository = ref.watch(deckRepositoryProvider);
   
   return repository.watchDeck(deckId).asyncMap((deck) async {
@@ -17,7 +17,7 @@ Stream<DeckModel?> deckDetail(DeckDetailRef ref, int deckId) {
 }
 
 @riverpod
-Stream<List<CardModel>> deckCards(DeckCardsRef ref, int deckId) {
+Stream<List<CardModel>> deckCards(Ref ref, int deckId) {
   final repository = ref.watch(deckRepositoryProvider);
   return repository.watchCardsInDeck(deckId);
 }

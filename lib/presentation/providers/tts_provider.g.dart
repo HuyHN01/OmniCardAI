@@ -6,22 +6,52 @@ part of 'tts_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$ttsServiceHash() => r'ecae8fecaac7aa3d1036aed6976f2aee1a7ccf2d';
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
 
-/// See also [ttsService].
 @ProviderFor(ttsService)
-final ttsServiceProvider = Provider<UnifiedTtsService>.internal(
-  ttsService,
-  name: r'ttsServiceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$ttsServiceHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const ttsServiceProvider = TtsServiceProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef TtsServiceRef = ProviderRef<UnifiedTtsService>;
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+final class TtsServiceProvider
+    extends
+        $FunctionalProvider<
+          UnifiedTtsService,
+          UnifiedTtsService,
+          UnifiedTtsService
+        >
+    with $Provider<UnifiedTtsService> {
+  const TtsServiceProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ttsServiceProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ttsServiceHash();
+
+  @$internal
+  @override
+  $ProviderElement<UnifiedTtsService> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  UnifiedTtsService create(Ref ref) {
+    return ttsService(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(UnifiedTtsService value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<UnifiedTtsService>(value),
+    );
+  }
+}
+
+String _$ttsServiceHash() => r'f9b1b61c60d41aae431542b43c481d29a75e5baf';

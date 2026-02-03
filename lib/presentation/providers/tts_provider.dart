@@ -7,6 +7,6 @@ part 'tts_provider.g.dart';
 // Singleton cho Unified Service
 // keepAlive: true -> Giống Provider thường (không autoDispose), giúp Service sống suốt vòng đời App.
 @Riverpod(keepAlive: true)
-UnifiedTtsService ttsService(TtsServiceRef ref) {
+UnifiedTtsService ttsService(Ref ref) {
   return UnifiedTtsService();
 }

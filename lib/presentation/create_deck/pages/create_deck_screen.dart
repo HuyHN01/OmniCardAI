@@ -88,7 +88,7 @@ class _CreateDeckScreenState extends ConsumerState<CreateDeckScreen> {
       final deckName = _nameController.text.trim();
       final description = _descriptionController.text.trim();
       
-      final newDeckId = await ref.read(deckNotifierProvider.notifier).addDeck(deckName, description);
+      final newDeckId = await ref.read(deckProvider.notifier).addDeck(deckName, description);
 
       // Simulate API call
       //await Future.delayed(const Duration(seconds: 1));
